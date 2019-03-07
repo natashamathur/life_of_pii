@@ -6,4 +6,6 @@ Things to consider
 
  - are we making everything lower case?
  - differentiating between different national numbers
- - what counts as a common name
+ 
+ 
+ https://stackoverflow.com/questions/9168340/using-a-dictionary-to-select-function-to-execute

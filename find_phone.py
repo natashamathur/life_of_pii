@@ -1,40 +1,129 @@
 import re
-# (\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4})
-# (\(\d{3}\)\s*\d{3}[-\.\s]??\d{4})
-# (\d{3}[-\.\s]??\d{4})
-# Phone number formats
-# US Local: 754-3010
-# US Domestic: (541) 754-3010
-# US International: +1-541-754-3010
-# US Dialed in the US: 1-541-754-3010
-# US Dialed from Germany: 001-541-754-3010
-# US Dialed from France: 191 541 754 3010
-#
-# In the US, the convention is 1 (area code) extension, while
-# in Germany it is (0 area code)/extension.
-# German Local: 636-48018
-# German Domestic: (089) / 636-48018
-# German International: +49-89-636-48018
-# German EU: 19-49-89-636-48018
+import os
+import sys
+import json
+from collections import defaultdict
 
 TELE_CORPUS = {
-    'eu_country_area': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b",
-    'eu_area': r"(?<![-\+])(([\(]??\d{3}\)??[-\.\s/]{0,3}){0,3}\d{3}[-\.\s]??\d{5})\b",
-    'us_number': r"?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b"}
+    # 'eu_country_area': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b",
+    'eu_number': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b"
+    # 'eu_area': r"(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
+    # 'us_number': r"?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b"
+    }
 
-def read_ascii(ascii_file):
-    with open(ascii_file, 'r') as f:
-        text_as_str = f.read().split('\n')
+def read_ascii(ascii_file, f=None):
+    if ascii_file == '':
+        sys.exit(f"pii_recognition error: No text detected for PII recognition in '{ascii_file}'. Please review parameters.")
+    try:
+        # test whether ascii_file is a valid file
+        if not f:
+            with open(ascii_file, 'r') as f:
+                text_as_str = f.read().split('\n')
+        else:
+            text_as_str = f.read().split('\n')
 
-    text_by_row = {row: val for row, val in enumerate(text_as_str)}
+    except FileNotFoundError:
+        # if not a valid file, parse as a text string
+        ascii_str = ascii_file
+        text_as_str = ascii_str.split('\n')
+    except Exception as e:
+        sys.exit(f"pii_recognition error: An error occurred in accessing text: {e}")
+
+    text_by_row = {row: (val, len(val)) for row, val in enumerate(text_as_str)}
     return text_by_row
 
-def find_numbers(ascii_file):
+def find_numbers(ascii_file, output_file=None):
+    # try:
+    #     f = open(ascii_file, 'r')
+    #     text_by_row = read_ascii(ascii_file, f=f)
+    # except FileNotFoundError:
+    #     ascii_str = ascii_file
+    #     text_as_str = ascii_str.split('\n')
+    #     text_by_row = {row: (val, len(val)) for row, val in enumerate(text_as_str)}
+
+    # return ascii text as dictionary of numbered rows
     text_by_row = read_ascii(ascii_file)
 
-    for row, linetext in text_by_row.items():
-        print(type(linetext))
-        for info_type, pattern  in TELE_CORPUS.items():
-            for m in re.finditer(pattern, linetext):
-                if m:
-                    print('row {}, position {} - {}: {} ({})'.format(row, m.start(), m.end(), m.group(0).strip(), info_type))
+    # initiate dictionary to capture findings
+    detected = defaultdict(dict)
+    # detected = {}
+
+    if output_file:
+        try:
+            o = open(output_file, 'w')
+
+            # open list in JSON file
+            o.write("[{")
+
+            for row, (line_text, line_length) in text_by_row.items():
+
+                for info_type, pattern in TELE_CORPUS.items():
+                    detected_row = []
+                    for m in re.finditer(pattern, line_text):
+                        if m:
+                            if line_length > 50:
+                                truncated = line_text[max(0, m.start()-20):min(line_length, m.end()+20)]
+                            # create tuple of info type, info detected, start and end positions,
+                                found = (info_type, m.group(0).strip(), f"{m.start()} - {m.end()}", truncated)
+                            else:
+                                found = (info_type, m.group(0).strip(), f"{m.start()} - {m.end()}", line_text)
+
+                            # initiate default dict as value
+                            # detected[row][info_type].append(found)
+
+                            detected_row.append(found)
+                    if len(detected_row) > 0:
+                        detected[row][info_type] = detected_row
+
+                if detected[row]:
+                    o.write(f'"{str(row)}":')
+                    o.write(json.dumps(detected[row]))
+                    o.write(",\n")
+
+        except Exception as e:
+            sys.exit(f"pii_recognition error: An error occurred during text parsing: {e}")
+
+        try:
+            # once all rows written, remove last comma by seeking to end of file
+            o.seek(0, os.SEEK_END)
+            o.seek(o.tell() - 3, os.SEEK_SET)
+
+            # close dict and end JSON file
+            o.write("}}]\n")
+            o.truncate()
+            o.close()
+
+            return detected
+
+        except Exception as e:
+            sys.exit(f"pii_recognition error: An unexpected error occurred in file write completion: {e}.")
+
+    else:
+        try:
+            for row, (line_text, line_length) in text_by_row.items():
+                # detected[row] = defaultdict(list)
+
+                for info_type, pattern in TELE_CORPUS.items():
+                    detected_row = []
+
+                    for m in re.finditer(pattern, line_text):
+                        if m:
+                            if line_length > 50:
+                                truncated = line_text[max(0, m.start() - 20):min(line_length, m.end() + 20)]
+
+                                # create tuple of info type, info detected, start and end positions,
+                                found = (info_type, m.group(0).strip(), f"{m.start()} - {m.end()}", truncated)
+                            else:
+                                found = (info_type, m.group(0).strip(), f"{m.start()} - {m.end()}", line_text)
+
+                            # add to list
+                            # detected[row][info_type].append(found)
+                            detected_row.append(found)
+                    if len(detected_row) > 0:
+                        detected[row][info_type] = detected_row
+
+            return detected
+        except Exception as e:
+            sys.exit(f"pii_recognition error: An error occurred during text parsing: {e}")
+
+

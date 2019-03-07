@@ -21,6 +21,7 @@ if len(y) > 0:
     else:
         print(q, "not valid")
 
+        # for addresses
 
 add_end = ['road', 'street', 'avenue', 'boulevard', 'lane', 'drive', 'way',
            'court', 'plaza', 'terrace', 'close']

@@ -1,3 +1,7 @@
+#AUSTRALIA_MEDICARE_NUMBER = 11 digits, First digit should be in the range 2-6 https://clearwater.com.au/code/medicare
+#AUSTRALIA_TAX_FILE_NUMBER = 9 digits, checksum divisible by 11
+#BRAZILIAN_CPF_NUMBER https://gist.github.com/gorork/4c3a04d0dcf0c50b958a
+
 #argentina = 9 digits, starts with 20, 23 for males, 27 for female
 #japan = 12 digits
 #koren = 13 digits, first 6 YYMMDD, 2 for females 3 for males, 6 random

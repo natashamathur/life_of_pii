@@ -6,7 +6,9 @@ from collections import defaultdict
 
 PII_CORPUS = {
     # 'eu_country_area': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b",
+    'AGE': r"\d",
     'GENDER': r"\b(male)\b|\b(female)\b|\b(man)\b|\b(woman)\b|\b(girl)\b|\b(boy)\b",
+    'CREDIT_CARD_NUMBER': r"\D",
     # TO DO: figure out why only some emails are being recognized
     # 'old_email': r"^[\.'\x07-z0-9_]*[a-z0-9]+[\.'\x07-z0-9_]*[a-z0-9]+@[a-z0-9]+\.(com|edu|gov|ca|org|net)$",
     'EMAIL_ADDRESS': r"([a-z0-9\_\'][\.'\\a-z0-9_]*[\'\_a-z0-9]@[a-z0-9]+\.(com|edu|gov|org|net|ca))",
@@ -14,6 +16,11 @@ PII_CORPUS = {
     # 'eu_area': r"(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
     'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b"
     }
+
+check_functions = {}
+check_function['CREDIT_CARD_NUMBER'] = "verify_cc_match"
+check_function['AGE'] = "check_age"
+
 
 def read_ascii(ascii_file, f=None):
     if ascii_file == '':
@@ -94,6 +101,7 @@ def find_numbers(ascii_file, output_file=None):
                     detected_row = []
                     for m in re.finditer(pattern, line_text):
                         if m:
+				is_m = check_functions[info_type](m)
                             if line_length > 50:
                                 truncated = line_text[max(0, m.start()-20):min(line_length, m.end()+20)]
                             # create tuple of info type, info detected, start and end positions,

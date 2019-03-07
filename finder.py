@@ -55,6 +55,14 @@ def verify_cc_match(match):
             return None
     else:
         return None
+    
+ def check_age(t):
+	maybe_age = [int(m) for m in re.findall('\d+', t)]
+	for m in maybe_age:
+		if m < 110:
+			return True
+    return False
+     
 
 
 def find_numbers(ascii_file, output_file=None):

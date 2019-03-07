@@ -1,8 +1,6 @@
 # PII Recognition Utility
-
-This utility will parse ASCII text dumps for personally identifying information, and classify PII type for any matches.
 =======
-# pii_recognition
+This utility will parse ASCII text dumps for personally identifying information (PII), and log PII type and position in the test for any matches.
 
 Things to consider 
 

@@ -6,6 +6,9 @@ from collections import defaultdict
 
 TELE_CORPUS = {
     # 'eu_country_area': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b",
+    'gender': r"\b(male)\b|\b(female)\b|\b(man)\b|\b(woman)\b|\b(girl)\b|\b(boy)\b",
+    # TO DO: figure out why only some emails are being recognized
+    'email': r"^[\.'\x07-z0-9_]*[a-z0-9]+[\.'\x07-z0-9_]*[a-z0-9]+@[a-z0-9]+\.(com|edu|gov|ca|org|net)$",
     'eu_number': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b"
     # 'eu_area': r"(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
     # 'us_number': r"?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b"
@@ -105,7 +108,7 @@ def find_numbers(ascii_file, output_file=None):
 
                 for info_type, pattern in TELE_CORPUS.items():
                     detected_row = []
-
+                    print(pattern)
                     for m in re.finditer(pattern, line_text):
                         if m:
                             if line_length > 50:
@@ -119,6 +122,7 @@ def find_numbers(ascii_file, output_file=None):
                             # add to list
                             # detected[row][info_type].append(found)
                             detected_row.append(found)
+
                     if len(detected_row) > 0:
                         detected[row][info_type] = detected_row
 

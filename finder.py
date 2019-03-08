@@ -4,19 +4,7 @@ import sys
 import json
 from collections import defaultdict
 
-PII_CORPUS = {
-    # 'eu_country_area': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b",
-    'AGE': r"\d",
-    'GENDER': r"\b(male)\b|\b(female)\b|\b(man)\b|\b(woman)\b|\b(girl)\b|\b(boy)\b",
-    'CREDIT_CARD_NUMBER': r"\D",
-    # TO DO: figure out why only some emails are being recognized
-    # 'old_email': r"^[\.'\x07-z0-9_]*[a-z0-9]+[\.'\x07-z0-9_]*[a-z0-9]+@[a-z0-9]+\.(com|edu|gov|ca|org|net)$",
-    'EMAIL_ADDRESS': r"([a-z0-9\_\'][\.'\\a-z0-9_]*[\'\_a-z0-9]@[a-z0-9]+\.(com|edu|gov|org|net|ca))",
-    'FDA_CODE': r"^[0-9]{0,2}$",
-    'PHONE_NUMBER_INT': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
-    # 'eu_area': r"(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
-    'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b"
-    }
+
 
 check_functions = {}
 check_function['CREDIT_CARD_NUMBER'] = "verify_cc_match"
@@ -57,37 +45,43 @@ def verify_cc_match(match):
 
             if (sum_odd + sum_even) % 10 == 0:
                 return digits
-            else:
-                return None
-        else:
-            return None
-    else:
-        return None
-    
- def check_age(t):
-	maybe_age = [int(m) for m in re.findall('\d+', t)]
-	for m in maybe_age:
-		if m < 110:
-			return True
-    return False
-     
 
+    
+def check_age(possible_age):
+    age_alone = possible_age.split(' ')[0]
+    if age_alone < 111:
+        return age_alone
+
+def standardize_gener(possible_gender):
+    if possible_gender.lower() in ('girl', 'woman', 'female'):
+        return "Female"
+    else:
+        return "Male"
+
+def checked(match):
+    return match
+
+     
+PII_CORPUS = {
+    # 'eu_country_area': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b",
+    'AGE': (r"\b\d{1,2}\b|\b\d{1,2} y.o.\b|\b\d{1,2} years\b", check_age),
+    'GENDER': (r"\b(male)\b|\b(female)\b|\b(man)\b|\b(woman)\b|\b(girl)\b|\b(boy)\b", standardize_gener),
+    'CREDIT_CARD_NUMBER': (r"^[0-9]{1,5}[-|,|_]?[0-9]{1,5}[-|,]?[0-9]{1,5}[-|,]?[0-9]{1,5}[-|,]", verify_cc_match),
+    # TO DO: figure out why only some emails are being recognized
+    # 'old_email': r"^[\.'\x07-z0-9_]*[a-z0-9]+[\.'\x07-z0-9_]*[a-z0-9]+@[a-z0-9]+\.(com|edu|gov|ca|org|net)$",
+    'EMAIL_ADDRESS': (r"([a-zA-Z0-9\_\'][\.'\\a-zA-Z0-9_]*[\'\_a-zA-Z0-9]@[a-zA-Z0-9]+\.(com|edu|gov|org|net|ca))", checked),
+    'FDA_CODE': r"^[0-9]{0,2}$",
+    'PHONE_NUMBER_INT': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
+    # 'eu_area': r"(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
+    'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b"
+    }
 
 def find_numbers(ascii_file, output_file=None):
-    # try:
-    #     f = open(ascii_file, 'r')
-    #     text_by_row = read_ascii(ascii_file, f=f)
-    # except FileNotFoundError:
-    #     ascii_str = ascii_file
-    #     text_as_str = ascii_str.split('\n')
-    #     text_by_row = {row: (val, len(val)) for row, val in enumerate(text_as_str)}
-
     # return ascii text as dictionary of numbered rows
     text_by_row = read_ascii(ascii_file)
 
     # initiate dictionary to capture findings
     detected = defaultdict(dict)
-    # detected = {}
 
     if output_file:
         try:
@@ -98,22 +92,23 @@ def find_numbers(ascii_file, output_file=None):
 
             for row, (line_text, line_length) in text_by_row.items():
 
-                for info_type, pattern in PII_CORPUS.items():
+                for info_type, (pattern, verify_fcn) in PII_CORPUS.items():
                     detected_row = []
                     for m in re.finditer(pattern, line_text):
                         if m:
-				is_m = check_functions[info_type](m)
-                            if line_length > 50:
-                                truncated = line_text[max(0, m.start()-20):min(line_length, m.end()+20)]
-                            # create tuple of info type, info detected, start and end positions,
-                                found = (info_type, m.group(0).strip(), f"{m.start()} - {m.end()}", truncated)
-                            else:
-                                found = (info_type, m.group(0).strip(), f"{m.start()} - {m.end()}", line_text)
 
-                            # initiate default dict as value
-                            # detected[row][info_type].append(found)
+                            verified = verify_fcn(m.group(0).strip())
 
-                            detected_row.append(found)
+                            if verified:
+                                if line_length > 50:
+                                    truncated = line_text[max(0, m.start()-20):min(line_length, m.end()+20)]
+                                # create tuple of info type, info detected, start and end positions,
+                                    found = (info_type, verified, f"{m.start()} - {m.end()}", truncated)
+                                else:
+                                    found = (info_type, verified, f"{m.start()} - {m.end()}", line_text)
+
+                                detected_row.append(found)
+
                     if len(detected_row) > 0:
                         detected[row][info_type] = detected_row
 

@@ -103,7 +103,7 @@ PII_CORPUS = {
     'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b",
     'CHINA ID': (r"([0-9]{6})([[1][9]|[2][0]])([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([0-9]{3})([0-9X])", verify_chinaid)
     'NAME': (r"([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)\s([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)(\s?[A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)?", extract_names)
-    }
+    'ICD_CODE': (r"[A-Z][0-9]{2}.[0-9]{2}", checked}
 
 def find_numbers(ascii_file, output_file=None):
     # return ascii text as dictionary of numbered rows

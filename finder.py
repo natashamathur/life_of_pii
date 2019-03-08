@@ -2,6 +2,7 @@ import re
 import os
 import sys
 import json
+import nltk
 from collections import defaultdict
 
 
@@ -46,7 +47,33 @@ def verify_cc_match(match):
             if (sum_odd + sum_even) % 10 == 0:
                 return digits
 
-    
+def verify_chinaid(match):
+    match = match.string
+    try:
+        checksum = (1-2*int(match[:-1], 13)) % 11
+    except ValueError:
+        return None
+    if checksum == 10:
+        if match[-1:] == 'X':
+            return match
+    else:
+        try:
+            if int(match[-1:]) == checksum:
+                return match
+        except ValueError:
+            return None
+
+def extract_names(match):
+    name = ""
+    token_line = nltk.sent_tokenize(match.string)
+    token_line = [nltk.word_tokenize(sent) for sent in token_line]
+    token_line = [nltk.pos_tag(sent) for sent in token_line][0]
+    for (new_string, tag) in token_line:
+        if tag in ["NNP", "NN"]:
+                name += new_string
+                name += " "
+    return name[:-1]
+        
 def check_age(possible_age):
     age_alone = possible_age.split(' ')[0]
     if age_alone < 111:
@@ -73,7 +100,9 @@ PII_CORPUS = {
     'FDA_CODE': r"^[0-9]{0,2}$",
     'PHONE_NUMBER_INT': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
     # 'eu_area': r"(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
-    'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b"
+    'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b",
+    'CHINA ID': (r"([0-9]{6})([[1][9]|[2][0]])([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([0-9]{3})([0-9X])", verify_chinaid)
+    'NAME': (r"([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)\s([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)(\s?[A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)?", extract_names)
     }
 
 def find_numbers(ascii_file, output_file=None):

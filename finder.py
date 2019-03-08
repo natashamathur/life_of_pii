@@ -61,24 +61,38 @@ def standardize_gener(possible_gender):
 def checked(match):
     return match
 
+def verify_phone(possible_us):
+    with open('area_codes.json') as f:
+        valid_us_codes = json.loads(f)
+
+    if possible_us.replace('(', '').replace(')', '').replace('-', '')[0:3] in valid_us_codes.keys():
+        return possible_us
+
+def check_ip(possible_ip):
+    nums = possible_ip.split('.')
+    if all(num for num in nums) <= 255:
+        return nums
      
 PII_CORPUS = {
     # 'eu_country_area': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b",
     'AGE': (r"\b\d{1,2}\b|\b\d{1,2} y.o.\b|\b\d{1,2} years\b", check_age),
+    'IP_ADDRESS': (r"[0-9]{3}.[0-9]{3}.[0-9]{3}.[0-9]{3}", check_ip)
     'GENDER': (r"\b(male)\b|\b(female)\b|\b(man)\b|\b(woman)\b|\b(girl)\b|\b(boy)\b", standardize_gener),
     'CREDIT_CARD_NUMBER': (r"^[0-9]{1,5}[-|,|_]?[0-9]{1,5}[-|,]?[0-9]{1,5}[-|,]?[0-9]{1,5}[-|,]", verify_cc_match),
     # TO DO: figure out why only some emails are being recognized
     # 'old_email': r"^[\.'\x07-z0-9_]*[a-z0-9]+[\.'\x07-z0-9_]*[a-z0-9]+@[a-z0-9]+\.(com|edu|gov|ca|org|net)$",
     'EMAIL_ADDRESS': (r"([a-zA-Z0-9\_\'][\.'\\a-zA-Z0-9_]*[\'\_a-zA-Z0-9]@[a-zA-Z0-9]+\.(com|edu|gov|org|net|ca))", checked),
-    'FDA_CODE': r"^[0-9]{0,2}$",
-    'PHONE_NUMBER_INT': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
+    'FDA_CODE': (r"^[0-9]{0,2}$", checked),
+    'PHONE_NUMBER_INT': (r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b", checked),
     # 'eu_area': r"(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
-    'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b"
+    'PHONE_NUMBER_US': (r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b", verify_phone)
     }
 
 def find_numbers(ascii_file, output_file=None):
     # return ascii text as dictionary of numbered rows
     text_by_row = read_ascii(ascii_file)
+
+
 
     # initiate dictionary to capture findings
     detected = defaultdict(dict)

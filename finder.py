@@ -91,6 +91,7 @@ def checked(match):
      
 PII_CORPUS = {
     # 'eu_country_area': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b",
+    'AUSTRALIA_MEDICARE_NUMBER' : (r"[2-6][0-9]{8}"),
     'AGE': (r"\b\d{1,2}\b|\b\d{1,2} y.o.\b|\b\d{1,2} years\b", check_age),
     'GENDER': (r"\b(male)\b|\b(female)\b|\b(man)\b|\b(woman)\b|\b(girl)\b|\b(boy)\b", standardize_gener),
     'CREDIT_CARD_NUMBER': (r"^[0-9]{1,5}[-|,|_]?[0-9]{1,5}[-|,]?[0-9]{1,5}[-|,]?[0-9]{1,5}[-|,]", verify_cc_match),

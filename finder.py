@@ -117,7 +117,7 @@ REGEX_ONLY_CORPUS = {
 
 
 
-def pii_finder(ascii_file, output_file=None):
+def pii_finder(ascii_file, output_file=None, ret=False):
     # return ascii text as dictionary of numbered rows
     text_by_row = read_ascii(ascii_file)
 
@@ -183,7 +183,8 @@ def pii_finder(ascii_file, output_file=None):
             o.truncate()
             o.close()
 
-            return detected
+            if ret:
+                return detected
 
         except Exception as e:
             sys.exit(f"pii_recognition error: An unexpected error occurred in file write completion: {e}.")

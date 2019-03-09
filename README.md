@@ -38,4 +38,4 @@ Our implementation focuses on PII that can be verified as valid, such as credit
 cards, phone numbers, and various national IDs. As many IDs are numerical, or
 can be otherwise converted into integers, particular focus was levied on IDs
 which can be verified ones with a known algorithim or checksum pattern over 
-IDs that are randomly or sequentially generated. 
+IDs that are randomly or sequentially generated.

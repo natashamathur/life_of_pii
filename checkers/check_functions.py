@@ -204,14 +204,29 @@ def hong_kong_id(string):
         return string + "(" + checksum + ")"
     else:
         return False
+
+esp_letters = ['T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E']
+
+    
+def check_spain_nif(nif):
+    nif = nif.replace("-", "")
+    nif_num = int(nif[:-1])
+    r = nif_num % 23
+    cl = esp_letters[r]
+    if nif[-1] == cl:
+        return True
+    else:
+        return False
     
 def check_spain_nie(nie):
     nie = nie.replace("-", "")
-    esp_letters = ['T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E']
+    nie = nie.replace("X", "0")
+    nie = nie.replace("Y", "1")
+    nie = nie.replace("Z", "2")
     nie_num = int(nie[:-1])
     r = nie_num % 23
     cl = esp_letters[r]
-    if dni[-1] == cl:
+    if nie[-1] == cl:
         return True
     else:
         return False

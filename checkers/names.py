@@ -12,4 +12,12 @@ def extract_names(line):
                 name += new_string
                 name += " "
     return name[:-1]
+
+def check_mac(mac_address):
+    imp = bin(int(mac[:2]))
+    imp = imp[-2:-1]
+    if int(imp) == 1:
+	return True
+    else:
+	return False
 	

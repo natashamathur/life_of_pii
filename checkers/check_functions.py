@@ -20,4 +20,16 @@ def check_mac(mac_address):
 	return True
     else:
 	return False
+
+def dea_checksum(dea):
+    v = dea[-7:-1]
+    check1, check2 = 0, 0
+    check1 = int(v[0])+ int(v[2]) + int(v[4])
+    check2 = int(v[1]) + int(v[3]) + int(v[5])
+    check = check1 + check2*2
+    cd = str(check)[-1]
+    if dea[-1] == cd:
+        return True
+    else:
+        return False
 	

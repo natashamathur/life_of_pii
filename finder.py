@@ -5,6 +5,7 @@ import json
 import nltk
 from collections import defaultdict
 
+from checkers.check_functions import *
 
 
 def read_ascii(ascii_file, f=None):
@@ -29,139 +30,45 @@ def read_ascii(ascii_file, f=None):
     return text_by_row
 
 
+def format_plaintext(info_type, match_found, line_text, line_length, start, end):
+    if line_length > 50:
+        truncated = line_text[max(0, start - 20):min(line_length, end + 20)]
 
-def verify_cc_match(match):
-    digits = re.sub("\D", "", match)
-    if digits[:1] in ["3", "4", "5", "6", "8"]:
-        if len(digits) >= 12 and len(digits) <= 19:
-            stripped = [int(x) for x in digits]
-
-            sum_odd = sum(stripped[-1::-2])
-            sum_even = sum([sum(divmod(2 * digits, 10)) for digits in stripped[-2::-2]])
-
-            if (sum_odd + sum_even) % 10 == 0:
-                return digits
-            return False
-        return False
-    return False
-
-
-def verify_chinaid(match):
-    match = match.string
-    try:
-        checksum = (1-2*int(match[:-1], 13)) % 11
-    except ValueError:
-        return False
-    if checksum == 10:
-        if match[-1:] == 'X':
-            return match
-        else:
-            return False
+        # create tuple of info type, info detected, start and end positions,
+        return (info_type, match_found, f"{start} - {end}", truncated)
     else:
-        try:
-            if int(match[-1:]) == checksum:
-                return match
-        except ValueError:
-            return False
+        return (info_type, match_found, f"{start} - {end}", line_text)
 
 
-def extract_names(match):
-    # name = ""
-    token_line = nltk.sent_tokenize(match)
-    token_line = [nltk.word_tokenize(sent) for sent in token_line]
-    token_line = [nltk.pos_tag(sent) for sent in token_line][0]
-
-    return " ".join((new_string for new_string, tag in token_line if tag in ("NNP", "NN")))
-    # for (new_string, tag) in token_line:
-    #     if tag in ["NNP", "NN"]:
-    #             name += new_string
-    #             name += " "
-    # return name[:-1]
-
-
-def check_age(possible_age):
-    print(f'possible_age passed: {possible_age}')
-    age_alone = possible_age.split(' ')[0]
-    # print(f'age_alone calculated: {age_alone}, from possible_age passed: {possible_age}')
-    if int(age_alone) < 111:
-        return age_alone
-    else:
-        return False
-
-
-def standardize_gender(possible_gender):
-    possible = possible_gender.lower()
-    if possible in ('girl', 'woman', 'female'):
-        return "Female"
-    elif possible in ('boy', 'man', 'male'):
-        return "Male"
-
-
-
-def checked(match):
-    return match
-
-
-
-def verify_phone(possible_us):
-    with open('area_codes.json') as f:
-        valid_us_codes = json.loads(f.read())
-
-    if possible_us.replace('(', '').replace(')', '').replace('-', '')[0:3] in valid_us_codes.keys():
-        return possible_us
-    else:
-        return False
-
-
-def check_ip(possible_ip):
-    nums = possible_ip.split('.')
-    if all(num for num in nums) <= 255:
-        return possible_ip
-    else:
-        return False
-
-
-def verify_ssn(possible_ssn):
-
-    x = re.findall('[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9]', sample)
-    if len(possible_ssn) > 0:
-        t = possible_ssn[0][:3]
-        if int(possible_ssn) < 772:
-            return possible_ssn
-        else:
-            print(x, "not valid")
-
-PII_CORPUS = {
+VERIFY_CORPUS = {
 
     # 'AGE': (r"\b([1-9]?\d{1,2})\b|\b([0]?[1-9]{1,2})\b|\b(\d{1,3} (years|ans|y.o.|años|anni|Jahre))\b|(?=\b(Age|Alter)[:\s\,\-]{1,2})(\d{1,3})\b", check_age),
     'SSN': (r"[0-9]{3}-[0-9{2}-[0-9]{4}]", verify_ssn),
     'IP_ADDRESS': (r"\b([0-9]{3}.[0-9]{3}.[0-9]{3}.[0-9]{3})\b", check_ip),
     'GENDER': (r"\b(male)\b|\b(female)\b|\b(man)\b|\b(woman)\b|\b(girl)\b|\b(boy)\b", standardize_gender),
-    # 'eu_country_area': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b",
     'AUSTRALIA_MEDICARE_NUMBER' : (r"[2-6][0-9]{8}"),
     'AGE': (r"\b\d{1,2}\b|\b\d{1,2} y.o.\b|\b\d{1,2} years\b", check_age),
     'CREDIT_CARD_NUMBER': (r"^[0-9]{1,5}[-|,|_]?[0-9]{1,5}[-|,]?[0-9]{1,5}[-|,]?[0-9]{1,5}[-|,]", verify_cc_match),
-    'EMAIL_ADDRESS': (r"([a-zA-Z0-9\_\'][\.'\\a-zA-Z0-9_]*[\'\_a-zA-Z0-9]@[a-zA-Z0-9]+\.(com|edu|gov|org|net|ca))", checked),
-    'PHONE_NUMBER_INT': (r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b", checked),
     'PHONE_NUMBER_US': (r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b", verify_phone),
     'CHINA ID': (r"([0-9]{6})([[1][9]|[2][0]])([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([0-9]{3})([0-9X])", verify_chinaid),
     'NAME': (r"([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)\s([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)(\s?[A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)?", extract_names),
-    'NORWAY_ID': (),
-    'FDA_CODE': (r"([0-9]{0,2}[a-zA-Z]{3,5}[a-zA-Z0-9]{6,7})", checked),
-    'ICD_CODE': (r"[A-Z][0-9]{2}.[0-9]{1,2}", checked),
-    'PHONE_NUMBER_INT': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
-    # 'eu_area': r"(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
-    'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b",
-    'CHINA ID': (r"([0-9]{6})([[1][9]|[2][0]])([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([0-9]{3})([0-9X])", verify_chinaid),
-    'NAME': (r"([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)\s([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)(\s?[A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)?", extract_names),
-    'ICD_CODE': (r"[A-Z][0-9]{2}.[0-9]{1,2}", checked),
-    'MAC_ADDRESS': (r"\b([0-9A-Z]{2}(\:|\-)){5}[0-9A-Z]{2}", checked),
+    'MAC_ADDRESS_LOCAL': (r"\b([0-9A-Z]{2}(\:|\-)){5}[0-9A-Z]{2}", check_mac_local),
     'SOUTH_AFRICA_NATIONAL_ID': (r"([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([0-9]{4})(0|1)(8|9)([0-9])", south_africa_id),
     'HONG_KONG_NATIONAL_ID': (r"([A-Z]{1,2})([0-9]{6})(([\(][0-9][\)])|[0-9])", hong_kong_id),
     'South Korea ID': (r"([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([-]?)([0-9]{6})", south_korea_id),
     'SWEDEN_NATIONAL_ID': (r"([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(\-?)([0-9]{4})", sweden_id)
     }
-    
+REGEX_ONLY_CORPUS = {
+    # 'AGE': (r"\b([1-9]?\d{1,2})\b|\b([0]?[1-9]{1,2})\b|\b(\d{1,3} (years|ans|y.o.|años|anni|Jahre))\b|(?=\b(Age|Alter)[:\s\,\-]{1,2})(\d{1,3})\b", check_age),
+    'AUSTRALIA_MEDICARE_NUMBER' : r"[2-6][0-9]{8}",
+    'EMAIL_ADDRESS': r"([a-zA-Z0-9\_\'][\.'\\a-zA-Z0-9_]*[\'\_a-zA-Z0-9]@[a-zA-Z0-9]+\.(com|edu|gov|org|net|ca))",
+    'PHONE_NUMBER_INT': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
+    'FDA_CODE': r"([0-9]{0,2}[a-zA-Z]{3,5}[a-zA-Z0-9]{6,7})",
+    'ICD_CODE': r"[A-Z][0-9]{2}.[0-9]{1,2}",
+    'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b",
+    'MAC_ADDRESS': r"\b([0-9A-Z]{2}(\:|\-)){5}[0-9A-Z]{2}"
+    }
+
 
 def pii_finder(ascii_file, output_file=None):
     # return ascii text as dictionary of numbered rows
@@ -179,7 +86,17 @@ def pii_finder(ascii_file, output_file=None):
 
             for row, (line_text, line_length) in text_by_row.items():
 
-                for info_type, (pattern, verify_fcn) in PII_CORPUS.items():
+                for info_type, pattern in REGEX_ONLY_CORPUS.items():
+                    detected_row = []
+                    for m in re.finditer(pattern, line_text):
+                        if m:
+                            detected_row.append(
+                                format_plaintext(info_type, m.group(0).strip(),
+                                                 line_text, line_length,
+                                                 start=m.start(), end=m.end())
+                            )
+
+                for info_type, (pattern, verify_fcn) in VERIFY_CORPUS.items():
                     detected_row = []
                     for m in re.finditer(pattern, line_text):
                         if m:
@@ -187,14 +104,11 @@ def pii_finder(ascii_file, output_file=None):
                             verified = verify_fcn(m.group(0).strip())
 
                             if verified:
-                                if line_length > 50:
-                                    truncated = line_text[max(0, m.start()-20):min(line_length, m.end()+20)]
-                                # create tuple of info type, info detected, start and end positions,
-                                    found = (info_type, verified, f"{m.start()} - {m.end()}", truncated)
-                                else:
-                                    found = (info_type, verified, f"{m.start()} - {m.end()}", line_text)
-
-                                detected_row.append(found)
+                                detected_row.append(
+                                    format_plaintext(info_type, verified,
+                                                     line_text, line_length,
+                                                     start=m.start(), end=m.end())
+                                    )
 
                     if len(detected_row) > 0:
                         detected[row][info_type] = detected_row
@@ -226,21 +140,29 @@ def pii_finder(ascii_file, output_file=None):
         try:
             for row, (line_text, line_length) in text_by_row.items():
 
-                for info_type, pattern in PII_CORPUS.items():
+                for info_type, pattern in REGEX_ONLY_CORPUS.items():
                     detected_row = []
-                    print(pattern)
                     for m in re.finditer(pattern, line_text):
                         if m:
-                            if line_length > 50:
-                                truncated = line_text[max(0, m.start() - 20):min(line_length, m.end() + 20)]
+                            detected_row.append(
+                                format_plaintext(info_type, m.group(0).strip(),
+                                                 line_text, line_length,
+                                                 start=m.start(), end=m.end())
+                            )
 
-                                # create tuple of info type, info detected, start and end positions,
-                                found = (info_type, m.group(0).strip(), f"{m.start()} - {m.end()}", truncated)
-                            else:
-                                found = (info_type, m.group(0).strip(), f"{m.start()} - {m.end()}", line_text)
+                for info_type, (pattern, verify_fcn) in VERIFY_CORPUS.items():
+                    detected_row = []
+                    for m in re.finditer(pattern, line_text):
+                        if m:
 
-                            # add to list
-                            detected_row.append(found)
+                            verified = verify_fcn(m.group(0).strip())
+
+                            if verified:
+                                detected_row.append(
+                                    format_plaintext(info_type, verified,
+                                                     line_text, line_length,
+                                                     start=m.start(), end=m.end())
+                                )
 
                     if len(detected_row) > 0:
                         detected[row][info_type] = detected_row

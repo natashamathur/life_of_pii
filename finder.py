@@ -68,8 +68,10 @@ REGEX_ONLY_CORPUS = {
     'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b",
     'MAC_ADDRESS': r"\b([0-9A-Z]{2}(\:|\-)){5}[0-9A-Z]{2}",
     'US_VIN_NUMBER': r"[(A-Z)(0-9)^IOQ]{17}",
-    'GERMANY_PASSPORT': r"[(0-9)C|F|G|H|J-N|P|R|T|V|W-Z]{9}"
+    'GERMANY_PASSPORT': r"[(0-9)C|F|G|H|J-N|P|R|T|V|W-Z]{9}",
+    'FRANCE_PASSPORT': r"[0-9]{2}[A-Za-z]{2}[0-9]{5}"
     }
+
 
 
 def pii_finder(ascii_file, output_file=None):

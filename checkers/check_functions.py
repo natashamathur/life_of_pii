@@ -74,14 +74,45 @@ def extract_names(match):
 
 
 
-
-
 def standardize_gender(possible_gender):
     possible = possible_gender.lower()
     if possible in ('girl', 'woman', 'female'):
         return "Female"
     elif possible in ('boy', 'man', 'male'):
         return "Male"
+
+
+def dea_checksum(dea):
+    v = dea[-7:-1]
+    check1, check2 = 0, 0
+    check1 = int(v[0])+ int(v[2]) + int(v[4])
+    check2 = int(v[1]) + int(v[3]) + int(v[5])
+    check = check1 + check2*2
+    cd = str(check)[-1]
+    if dea[-1] == cd:
+        return True
+    else:
+        return False
+
+
+
+def australia_tax(n):
+    total = 0
+    for i in n:
+        total = total + int(i)
+    check = total % 11
+    if check == 0:
+        return n
+
+
+def australia_medicare(n):
+    checksum_weights = [1, 3, 7, 9, 1, 3, 7, 9]
+    total = 0
+    for i in range(8):
+        total = int(n[i]) * checksum_weights[i]
+    cs = total % 10
+    if cs == n[8]:
+        return n
 
 
 def sweden_id(string):
@@ -95,6 +126,36 @@ def sweden_id(string):
             return string
 
 
+def south_korea_id(string):
+    string = re.sub('[-]', '', string)
+    checksum = string[-1:]
+    mults = [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5]
+    total = 0
+    for x in range(0, 12):
+        total += int(string[x]) * mults[x]
+
+    remainder = (11 - total % 11) % 10
+    if remainder == int(checksum):
+        return string[0:6] + "-" + string[7:13]
+
+
+def south_africa_id(string):
+    digits = re.sub("\D", "", string)
+    if digits[:1] in ["3", "4", "5", "6", "8"]:
+        if len(digits) >= 12 and len(digits) <= 19:
+            stripped = [int(x) for x in digits]
+
+            sum_odd = sum(stripped[-1::-2])
+            sum_even = sum([sum(divmod(2 * digits, 10)) for digits in stripped[-2::-2]])
+
+            if (sum_odd + sum_even) % 10 == 0:
+                return digits
+            else:
+                return False
+        else:
+            return False
+    else:
+        return False
 
 
 def verify_chinaid(match):
@@ -143,3 +204,5 @@ def hong_kong_id(string):
         return string + "(" + checksum + ")"
     else:
         return False
+
+

@@ -31,10 +31,15 @@ def verify_cc_match(match):
 
 
 def check_mac_local(mac_address):
-    imp = bin(int(mac_address[:2]))
-    imp = imp[-2:-1]
-    if int(imp) == 1:
-        return True
+
+    first_two = mac_address[0:2]
+    # combine binary representation of first and second characters in mac
+    # address into one number,
+    binary_form = ''.join(f"{int(char, 16):b}" for char in first_two)
+
+    # check whether second to last number (second least significant digit) is 1
+    if int(binary_form[-2]) == 1:
+        return mac_address
     else:
         return False
 
@@ -43,7 +48,7 @@ def verify_phone(possible_us):
     with open('area_codes.json') as f:
         valid_us_codes = json.loads(f.read())
 
-    if possible_us.replace('(', '').replace(')', '').replace('-', '')[0:3] in valid_us_codes.keys():
+    if possible_us.replace('(', '').replace(')', '').replace('-', '').replace(' ', '')[-10:-7] in valid_us_codes.keys():
         return possible_us
     else:
         return False
@@ -90,7 +95,7 @@ def dea_checksum(dea):
     check = check1 + check2*2
     cd = str(check)[-1]
     if dea[-1] == cd:
-        return True
+        return dea
     else:
         return False
 

@@ -121,18 +121,30 @@ def check_ip(possible_ip):
         return False
 
 
+def verify_ssn(possible_ssn):
+
+    x = re.findall('[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9]', sample)
+    if len(possible_ssn) > 0:
+        t = possible_ssn[0][:3]
+        if int(possible_ssn) < 772:
+            return possible_ssn
+        else:
+            print(x, "not valid")
+
 PII_CORPUS = {
     # 'AGE': (r"\b([1-9]?\d{1,2})\b|\b([0]?[1-9]{1,2})\b|\b(\d{1,3} (years|ans|y.o.|años|anni|Jahre))\b|(?=\b(Age|Alter)[:\s\,\-]{1,2})(\d{1,3})\b", check_age),
+    'SSN': (r"[0-9]{3}-[0-9{2}-[0-9]{4}]", verify_ssn),
     'IP_ADDRESS': (r"\b([0-9]{3}.[0-9]{3}.[0-9]{3}.[0-9]{3})\b", check_ip),
     'GENDER': (r"\b(male)\b|\b(female)\b|\b(man)\b|\b(woman)\b|\b(girl)\b|\b(boy)\b", standardize_gender),
     'CREDIT_CARD_NUMBER': (r"^[0-9]{1,5}[-|,|_]?[0-9]{1,5}[-|,]?[0-9]{1,5}[-|,]?[0-9]{1,5}[-|,]", verify_cc_match),
     'EMAIL_ADDRESS': (r"([a-zA-Z0-9\_\'][\.'\\a-zA-Z0-9_]*[\'\_a-zA-Z0-9]@[a-zA-Z0-9]+\.(com|edu|gov|org|net|ca))", checked),
-    # 'FDA_CODE': (r"^[0-9]{0,2}$", checked),
     'PHONE_NUMBER_INT': (r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b", checked),
     'PHONE_NUMBER_US': (r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b", verify_phone),
     'CHINA ID': (r"([0-9]{6})([[1][9]|[2][0]])([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([0-9]{3})([0-9X])", verify_chinaid),
     'NAME': (r"([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)\s([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)(\s?[A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)?", extract_names),
-    'NORWAY_ID': ()
+    'NORWAY_ID': (),
+    'FDA_CODE': (r"([0-9]{0,2}[a-zA-Z]{3,5}[a-zA-Z0-9]{6,7})", checked),
+    'ICD_CODE': (r"[A-Z][0-9]{2}.[0-9]{1,2}", checked
     }
 
 

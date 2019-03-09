@@ -113,7 +113,8 @@ PII_CORPUS = {
     'Sweden': (r"([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(\-?)([0-9]{4})", sweden_id),
     'US_DEA_NUMBER': (r"[A|B|C|D|E|F|G|H|J|K|L|M|P|R|S|T|U|X][A-Z|9][0-9]{7}|-[A-Z0-9]{4-5}", dea_checksum),
     'US_VIN_NUMBER': (r"[(A-Z)(0-9)^IOQ]{17}", checked),
-    'GERMANY_PASSPORT': (r"[(0-9)C|F|G|H|J-N|P|R|T|V|W-Z]{9}", checked)
+    'GERMANY_PASSPORT': (r"[(0-9)C|F|G|H|J-N|P|R|T|V|W-Z]{9}", checked),
+    'FRANCE_PASSPORT': (r"[0-9]{2}[A-Za-z]{2}[0-9]{5}")
 
 def find_numbers(ascii_file, output_file=None):
     # return ascii text as dictionary of numbered rows

@@ -135,35 +135,9 @@ def pii_finder(ascii_file, output_file=None, ret=False):
 
                 detected =  parse_line(row, line_text, line_length, corpus=REGEX_ONLY_CORPUS,
                                        detected_dict=detected, file_obj=o, verify=False)
-                # for info_type, pattern in REGEX_ONLY_CORPUS.items():
-                #     detected_row = []
-                #     for m in re.finditer(pattern, line_text):
-                #         if m:
-                #             detected_row.append(
-                #                 format_plaintext(info_type, m.group(0).strip(),
-                #                                  line_text, line_length,
-                #                                  start=m.start(), end=m.end())
-                #             )
 
                 detected = parse_line(row, line_text, line_length, corpus=VERIFY_CORPUS,
                                       detected_dict=detected, file_obj=o, verify=True)
-
-                # for info_type, (pattern, verify_fcn) in VERIFY_CORPUS.items():
-                #     detected_row = []
-                #     for m in re.finditer(pattern, line_text):
-                #         if m:
-                #
-                #             verified = verify_fcn(m.group(0).strip())
-                #
-                #             if verified:
-                #                 detected_row.append(
-                #                     format_plaintext(info_type, verified,
-                #                                      line_text, line_length,
-                #                                      start=m.start(), end=m.end())
-                #                     )
-                #
-                #     if len(detected_row) > 0:
-                #         detected[row][info_type] = detected_row
 
                 if detected[row]:
                     o.write(f'"{str(row)}":')
@@ -196,36 +170,12 @@ def pii_finder(ascii_file, output_file=None, ret=False):
                 detected = parse_line(row, line_text, line_length, corpus=REGEX_ONLY_CORPUS,
                                       detected_dict=detected, verify=False)
 
-                # for info_type, pattern in REGEX_ONLY_CORPUS.items():
-                #     detected_row = []
-                #     for m in re.finditer(pattern, line_text):
-                #         if m:
-                #             detected_row.append(
-                #                 format_plaintext(info_type, m.group(0).strip(),
-                #                                  line_text, line_length,
-                #                                  start=m.start(), end=m.end())
-                #             )
 
                 detected = parse_line(row, line_text, line_length, corpus=VERIFY_CORPUS,
                                       detected_dict=detected, verify=True)
-                # for info_type, (pattern, verify_fcn) in VERIFY_CORPUS.items():
-                #     detected_row = []
-                #     for m in re.finditer(pattern, line_text):
-                #         if m:
-                #
-                #             verified = verify_fcn(m.group(0).strip())
-                #
-                #             if verified:
-                #                 detected_row.append(
-                #                     format_plaintext(info_type, verified,
-                #                                      line_text, line_length,
-                #                                      start=m.start(), end=m.end())
-                #                 )
-                #
-                #     if len(detected_row) > 0:
-                #         detected[row][info_type] = detected_row
 
             return detected
+
         except Exception as e:
             sys.exit(f"pii_recognition error: An error occurred during text parsing: {e}")
 

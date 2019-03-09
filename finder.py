@@ -95,20 +95,24 @@ VERIFY_CORPUS = {
     'SOUTH_AFRICA_NATIONAL_ID': (r"\b([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([0-9]{4})(0|1)(8|9)([0-9])\b", south_africa_id),
     'HONG_KONG_NATIONAL_ID': (r"\b([A-Z]{1,2})([0-9]{6})(([\(][0-9][\)])|[0-9])\b", hong_kong_id),
     'US_DEA_NUMBER': (r"\b([A|B|C|D|E|F|G|H|J|K|L|M|P|R|S|T|U|X][A-Z|9][0-9]{7}|-[A-Z0-9]{4-5})\b", dea_checksum),
-    'SWEDEN_NATIONAL_ID': (r"\b([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(\-?)([0-9]{4})", sweden_id)
+    'SWEDEN_NATIONAL_ID': (r"\b([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(\-?)([0-9]{4})", sweden_id),
+    'SPAIN_NIF_NUMBER': (r"[0-9]{8}-?[A-Z]", check_spain_nif),
+    'SPAIN_NIE_NUMBER': (r"[X|Y|Z]-?[0-9]{7}-?[A-Z]", check_spain_nie)
     }
+    
+
 REGEX_ONLY_CORPUS = {
     # 'AGE': (r"\b([1-9]?\d{1,2})\b|\b([0]?[1-9]{1,2})\b|\b(\d{1,3} (years|ans|y.o.|años|anni|Jahre))\b|(?=\b(Age|Alter)[:\s\,\-]{1,2})(\d{1,3})\b", check_age),
-    'AUSTRALIA_MEDICARE_NUMBER' : r"\b([2-6][0-9]{8})\b",
-    'EMAIL_ADDRESS': r"\b([a-zA-Z0-9\_\'][\.'\\a-zA-Z0-9_]*[\'\_a-zA-Z0-9]@[a-zA-Z0-9]+\.(com|edu|gov|org|net|ca))\b",
-    'PHONE_NUMBER_INT': r"\b(\+?(\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|\b(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
-    'FDA_CODE': r"\b([0-9]{0,2}[a-zA-Z]{3,5}[a-zA-Z0-9]{6,7})\b",
-    'ICD_CODE': r"\b([A-Z][0-9]{2}.[0-9]{1,2})\b",
-    'PHONE_NUMBER_US': r"\b(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b",
-    'MAC_ADDRESS': r"\b(([0-9A-Z]{2}(\:|\-)){5}[0-9A-Z]{2})\b",
-    'US_VIN_NUMBER': r"\b([(A-Z)(0-9)^IOQ]{17})\b",
-    'GERMANY_PASSPORT': r"\b([(0-9)C|F|G|H|J-N|P|R|T|V|W-Z]{9})\b",
-    'FRANCE_PASSPORT': r"\b([0-9]{2}[A-Za-z]{2}[0-9]{5})\b"
+    'AUSTRALIA_MEDICARE_NUMBER' : r"[2-6][0-9]{8}",
+    'EMAIL_ADDRESS': r"([a-zA-Z0-9\_\'][\.'\\a-zA-Z0-9_]*[\'\_a-zA-Z0-9]@[a-zA-Z0-9]+\.(com|edu|gov|org|net|ca))",
+    'PHONE_NUMBER_INT': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",
+    'FDA_CODE': r"([0-9]{0,2}[a-zA-Z]{3,5}[a-zA-Z0-9]{6,7})",
+    'ICD_CODE': r"[A-Z][0-9]{2}.[0-9]{1,2}",
+    'PHONE_NUMBER_US': r"(?<![-])\b([\+]??\d{0,2}[-\.\s/]??([\(]??\d{3}\)??[-\.\s/]??){0,3}\d{3}[-\.\s]??\d{4})\b",
+    'MAC_ADDRESS': r"\b([0-9A-Z]{2}(\:|\-)){5}[0-9A-Z]{2}",
+    'US_VIN_NUMBER': r"[(A-Z)(0-9)^IOQ]{17}",
+    'GERMANY_PASSPORT': r"[(0-9)C|F|G|H|J-N|P|R|T|V|W-Z]{9}",
+    'FRANCE_PASSPORT': r"[0-9]{2}[A-Za-z]{2}[0-9]{5}"
     }
 
 

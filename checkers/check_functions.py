@@ -48,7 +48,20 @@ def verify_phone(possible_us):
     with open('area_codes.json') as f:
         valid_us_codes = json.loads(f.read())
 
-    if possible_us.replace('(', '').replace(')', '').replace('-', '').replace(' ', '')[-10:-7] in valid_us_codes.keys():
+    stripped = possible_us.replace('(', '').replace(')', '').replace('-', '').replace(' ', '')
+    if len(stripped) >= 10:
+        area_code = stripped[-10: -7]
+    # check whether number is a toll-free or fictional number
+    if area_code in ('800', '555'):
+        return False
+
+    # if number matches ###-555-0###, ensure last three numbers are not
+    # between 100 and 199, which are reserved for fictional numbers
+    if stripped[-7:-3] == '5550':
+        if 100 <= int(stripped[-3:-1]) <= 199:
+            return False
+
+    if area_code in valid_us_codes.keys():
         return possible_us
     else:
         return False
@@ -210,4 +223,30 @@ def hong_kong_id(string):
     else:
         return False
 
+esp_letters = ['T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N',
+               'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E']
+
+    
+def check_spain_nif(nif):
+    nif = nif.replace("-", "")
+    nif_num = int(nif[:-1])
+    r = nif_num % 23
+    cl = esp_letters[r]
+    if nif[-1] == cl:
+        return True
+    else:
+        return False
+    
+def check_spain_nie(nie):
+    nie = nie.replace("-", "")
+    nie = nie.replace("X", "0")
+    nie = nie.replace("Y", "1")
+    nie = nie.replace("Z", "2")
+    nie_num = int(nie[:-1])
+    r = nie_num % 23
+    cl = esp_letters[r]
+    if nie[-1] == cl:
+        return True
+    else:
+        return False
 

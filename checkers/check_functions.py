@@ -204,5 +204,15 @@ def hong_kong_id(string):
         return string + "(" + checksum + ")"
     else:
         return False
-
+    
+def check_spain_nie(nie):
+    nie = nie.replace("-", "")
+    esp_letters = ['T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E']
+    nie_num = int(nie[:-1])
+    r = nie_num % 23
+    cl = esp_letters[r]
+    if dni[-1] == cl:
+        return True
+    else:
+        return False
 

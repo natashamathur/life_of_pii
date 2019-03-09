@@ -106,12 +106,11 @@ PII_CORPUS = {
     'NAME': (r"([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)\s([A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)(\s?[A-Z][a-z]*(\-[A-Z][a-z]*)?\.?)?", extract_names),
     'ICD_CODE': (r"[A-Z][0-9]{2}.[0-9]{1,2}", checked),
     'MAC_ADDRESS': (r"\b([0-9A-Z]{2}(\:|\-)){5}[0-9A-Z]{2}", checked),
+    'MAC_ADDRESS_LOCAL': (r"\b([0-9A-Z]{2}(\:|\-)){5}[0-9A-Z]{2}", check_if_mac_local),
     'South African ID': (r"([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([0-9]{4})(0|1)(8|9)([0-9])", south_africa_id),
     'Hong Kong ID': (r"([A-Z]{1,2})([0-9]{6})(([\(][0-9][\)])|[0-9])", hong_kong_id),
     'South Korea ID': (r"([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([-]?)([0-9]{6})", south_korea_id),
     'Sweden': (r"([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(\-?)([0-9]{4})", sweden_id),
-    
-    
 
 def find_numbers(ascii_file, output_file=None):
     # return ascii text as dictionary of numbered rows

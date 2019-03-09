@@ -111,7 +111,8 @@ PII_CORPUS = {
     'Hong Kong ID': (r"([A-Z]{1,2})([0-9]{6})(([\(][0-9][\)])|[0-9])", hong_kong_id),
     'South Korea ID': (r"([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([-]?)([0-9]{6})", south_korea_id),
     'Sweden': (r"([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(\-?)([0-9]{4})", sweden_id),
-    'US_DEA_NUMBER': (r"[A|B|C|D|E|F|G|H|J|K|L|M|P|R|S|T|U|X][A-Z|9][0-9]{7}|-[A-Z0-9]{4-5}", dea_checksum)
+    'US_DEA_NUMBER': (r"[A|B|C|D|E|F|G|H|J|K|L|M|P|R|S|T|U|X][A-Z|9][0-9]{7}|-[A-Z0-9]{4-5}", dea_checksum).
+    'US_VIN_NUMBER': (r"[(A-Z)(0-9)^IOQ]{17}", checked)
 
 def find_numbers(ascii_file, output_file=None):
     # return ascii text as dictionary of numbered rows

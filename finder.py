@@ -97,7 +97,12 @@ VERIFY_CORPUS = {
     'US_DEA_NUMBER': (r"\b([A|B|C|D|E|F|G|H|J|K|L|M|P|R|S|T|U|X][A-Z|9][0-9]{7}|-[A-Z0-9]{4-5})\b", dea_checksum),
     'SWEDEN_NATIONAL_ID': (r"\b([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(\-?)([0-9]{4})", sweden_id),
     'SPAIN_NIF_NUMBER': (r"[0-9]{8}-?[A-Z]", check_spain_nif),
-    'SPAIN_NIE_NUMBER': (r"[X|Y|Z]-?[0-9]{7}-?[A-Z]", check_spain_nie)
+    'SPAIN_NIE_NUMBER': (r"[X|Y|Z]-?[0-9]{7}-?[A-Z]", check_spain_nie),
+    'UK_NHS_ID': (r"[0-9]{3}\s?[0-9]{3}\s?[0-9]{4}", uk_nhs_id),
+    'CANADIAN_INSURANCE_ID': (r"[0-9]{3}\s?[0-9]{3}\s?[0-9]{3}", canadian_insur_id),
+    'MEXICAN_CURP_ID': (r"[A-Z]{4}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[HM][A-Z]{5}[0-9]{2}", mexico_curp),
+    'FRENCH_NATIONAL_INSEE_ID': (r"[12][0-9]{2}(0[1-9]|1[0-2])[0-9]{4,6}[0-9]{3}\s?[0[1-9]|[1-8][0-9]|9[0-7]]", french_insee_id),
+    'POLISH_PESEL_ID': (r"[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[0-9]{5}", polish_pesel)
     }
     
 
@@ -112,7 +117,8 @@ REGEX_ONLY_CORPUS = {
     'MAC_ADDRESS': r"\b([0-9A-Z]{2}(\:|\-)){5}[0-9A-Z]{2}",
     'US_VIN_NUMBER': r"[(A-Z)(0-9)^IOQ]{17}",
     'GERMANY_PASSPORT': r"[(0-9)C|F|G|H|J-N|P|R|T|V|W-Z]{9}",
-    'FRANCE_PASSPORT': r"[0-9]{2}[A-Za-z]{2}[0-9]{5}"
+    'FRANCE_PASSPORT': r"[0-9]{2}[A-Za-z]{2}[0-9]{5}",
+    'UK_INSURANCE_ID': r"(([A-CGHJ-PR-TW-Z]{2})([0-9]{6})[A-D])"
     }
 
 

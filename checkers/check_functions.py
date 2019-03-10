@@ -133,32 +133,32 @@ def australia_medicare(n):
         return n
 
 
-def sweden_id(string):
-    digits = re.sub("\D", "", (string)[:-1])
-    checksum = int(string[-1:])
+def sweden_id(match):
+    digits = re.sub("\D", "", (match)[:-1])
+    checksum = int(match[-1:])
     if digits[:1] in ["3", "4", "5", "6", "8"]:
         stripped = [int(x) for x in digits]
         sum_odd = sum(stripped[-1::-2])
         sum_even = sum([sum(divmod(2 * digits, 10)) for digits in stripped[-2::-2]])
         if (sum_odd + sum_even) % 10 == checksum:
-            return string
+            return match
 
 
-def south_korea_id(string):
-    string = re.sub('[-]', '', string)
-    checksum = string[-1:]
+def south_korea_id(match):
+    match = re.sub('[-]', '', match)
+    checksum = match[-1:]
     mults = [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5]
     total = 0
     for x in range(0, 12):
-        total += int(string[x]) * mults[x]
+        total += int(match[x]) * mults[x]
 
     remainder = (11 - total % 11) % 10
     if remainder == int(checksum):
-        return string[0:6] + "-" + string[7:13]
+        return match[0:6] + "-" + match[7:13]
 
 
-def south_africa_id(string):
-    digits = re.sub("\D", "", string)
+def south_africa_id(match):
+    digits = re.sub("\D", "", match)
     if digits[:1] in ["3", "4", "5", "6", "8"]:
         if len(digits) >= 12 and len(digits) <= 19:
             stripped = [int(x) for x in digits]
@@ -177,7 +177,6 @@ def south_africa_id(string):
 
 
 def verify_chinaid(match):
-    match = match.string
     try:
         checksum = (1-2*int(match[:-1], 13)) % 11
     except ValueError:
@@ -195,23 +194,23 @@ def verify_chinaid(match):
             return False
 
 
-def hong_kong_id(string):
-    string = re.sub('[()]', '', string)
-    checksum = string [-1:]
-    string = string [:-1]
+def hong_kong_id(match):
+    match = re.sub('[()]', '', match)
+    checksum = match [-1:]
+    match = match [:-1]
     mults = [9, 8, 7, 6, 5, 4, 3, 2]
     total = 0
-    length = len(string)
+    length = len(match)
     if length:
         for x in range(0, 2):
-            total += ((ord(string[x]) - 55) * mults[x])
+            total += ((ord(match[x]) - 55) * mults[x])
         for y in range(2, 8):
-            total += (int(string[y]) * mults[y])
+            total += (int(match[y]) * mults[y])
     elif length:
         total += 36*9
-        total += (ord(string[0]) - 55) * mults[1]
+        total += (ord(match[0]) - 55) * mults[1]
         for y in range(1, 7):
-            total += int(string[y]) * mults[y + 1]
+            total += int(match[y]) * mults[y + 1]
     remainder = total % 11
     if remainder != 0:
         if remainder == 1:
@@ -219,7 +218,7 @@ def hong_kong_id(string):
         else:
             remainder = 11 - remainder
     if remainder == int(checksum):
-        return string + "(" + checksum + ")"
+        return match + "(" + checksum + ")"
     else:
         return False
 
@@ -250,3 +249,75 @@ def check_spain_nie(nie):
     else:
         return False
 
+def uk_nhs_id(match):
+    mults = [10, 9, 8, 7, 6, 5, 4, 3, 2]
+    digits = re.sub("\D", "", (match)[:-1])
+    checksum = int(match[-1:])
+    total = 0
+    for x in range (0,9):
+        total += int(digits[x]) * mults[x]
+
+    remainder = 11 - (total % 11)
+
+    if remainder != 10:
+        if remainder == 11 & checksum == 0:
+            return match
+        elif remainder == checksum:
+            return match
+
+def canadian_insur_id(match):
+    digits = re.sub("\D", "", (match))
+    total = 0
+    for x in range (0, len(digits)):
+        if (x + 1) % 2 == 0:
+            addition = 2 * int(digits[x])
+            if addition > 9:
+                total += int(str(addition)[0])
+                total += int(str(addition)[1])
+
+            else:
+                total += addition
+        else:
+            total += int(digits[x])
+    if total % 10 == 0:
+        return match
+            
+def mexico_curp(match):
+    characters = match[:-1]
+    checksum = int(match[-1:])
+    chars = '0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ'
+    total = 0
+    for x in range(0, len(characters)):
+        total += (x - 1) * chars.index(characters[x])
+    remainder = total % 11
+    print(remainder)
+    if remainder == 10 & checksum == "A":
+        return match
+    elif remainder == 11 & checksum == 0:
+        return match
+    elif remainder == checksum:
+        return match
+
+        
+def french_insee_id(match):
+    digits = re.sub("\D", "", (match[:-2]))
+    checksum = match[-2:]
+    remainder = 97 - (int(digits) % 97)
+    if remainder == 0 and int(checksum) == 97:
+        return digits + " " + checksum
+    elif remainder == int(checksum):
+        return digits + " " + checksum
+    
+    
+def polish_pesel(match):
+    digits = re.sub("\D", "", (match[:-1]))
+    checksum = int(match[-1:])
+    total = 0
+    
+    mults = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3]
+    for x in range(0, len(digits)):
+        total += mults[x] * int(digits[x])
+    remainder = 10 - (total % 10)
+    
+    if remainder == checksum:
+        return match

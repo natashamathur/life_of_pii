@@ -48,3 +48,38 @@ cards, phone numbers, and various national IDs. As many IDs are numerical, or
 can be otherwise converted into integers, particular focus was levied on IDs
 which can be verified ones with a known algorithim or checksum pattern over 
 IDs that are randomly or sequentially generated.
+
+**Verifiable PII
+-American SSN
+-American Phone Numbers
+-American DEA Number
+-Canadian Insurance Number
+-Chinese National ID Number
+-Credit Card Number
+-French National INSEE ID Number
+-Gender
+-Hong Kong National ID Number
+-IP Address
+-MAC Address Local
+-Name
+-Mexican CURP National ID Number
+-Polish National PESEL ID Number
+-South African National ID Number
+-South Korean National ID Number
+-Spanish NIE Number
+-Spanish NIF Number
+-Swedish National ID Number
+-UK NHS ID Number
+
+**REGEXed PII
+-Age
+-American VIN Number
+-Australian Medicare Number
+-Email Address
+-FDA Code
+-French Passport Number
+-German Passport Number
+-ICD Code
+-International Phone Number
+-MAC Address
+-UK Insurance ID Number

@@ -49,7 +49,7 @@ can be otherwise converted into integers, particular focus was levied on IDs
 which can be verified ones with a known algorithim or checksum pattern over 
 IDs that are randomly or sequentially generated.
 
-**Verifiable PII
+**Verifiable PII**
 - American SSN
 - American Phone Numbers
 - American DEA Number
@@ -71,7 +71,7 @@ IDs that are randomly or sequentially generated.
 - Swedish National ID Number
 - UK NHS ID Number
 
-**REGEXed PII
+**REGEXed PII**
 - Age
 - American VIN Number
 - Australian Medicare Number

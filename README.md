@@ -50,6 +50,7 @@ which can be verified ones with a known algorithim or checksum pattern over
 IDs that are randomly or sequentially generated.
 
 **Verifiable PII
+
 -American SSN
 -American Phone Numbers
 -American DEA Number
@@ -72,6 +73,7 @@ IDs that are randomly or sequentially generated.
 -UK NHS ID Number
 
 **REGEXed PII
+
 -Age
 -American VIN Number
 -Australian Medicare Number

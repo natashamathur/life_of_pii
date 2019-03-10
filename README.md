@@ -1,4 +1,5 @@
 # Life of PII Recognition Utility
+
 This utility parses ASCII text for several kinds of personally identifiable 
 information (PII), including national ID numbers, US and international telephone
 numbers, gender, IP and MAC addresses, physical addresses, credit card numbers,
@@ -12,6 +13,16 @@ easily verify the results and locate associated information.
 The utility can also return a dictionary with the relevant data (versus writing 
 to a file), to allow for flexible interaction with possible PII.
 
+## Authors
+
+- [Andrew Deng](https://github.com/CAPPAndrew)
+- [Loren Hinkson](https://github.com/lorenh516)
+- [Natasha Mathur](https://github.com/natashamathur)
+
+
+## Getting Started
+
+This utility requires Python 3.7 and the  packages [`re`](https://docs.python.org/3/library/re.html) and [`nltk`](https://www.nltk.org/).
 
 ## Methodology
 The PII utility relies heavily on the `re` library for regex text matching, and
@@ -40,6 +51,4 @@ can be otherwise converted into integers, particular focus was levied on IDs
 which can be verified ones with a known algorithim or checksum pattern over 
 IDs that are randomly or sequentially generated.
 
-## Usage
 
-This utility requires Python 3.7 and the  packages [`re`](https://docs.python.org/3/library/re.html) and [`nltk`](https://www.nltk.org/).

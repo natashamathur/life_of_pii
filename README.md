@@ -39,3 +39,10 @@ cards, phone numbers, and various national IDs. As many IDs are numerical, or
 can be otherwise converted into integers, particular focus was levied on IDs
 which can be verified ones with a known algorithim or checksum pattern over 
 IDs that are randomly or sequentially generated.
+
+## Usage
+
+This utility requires Python 3.7. and uses the following packages. 
+
+[`re`](https://docs.python.org/3/library/re.html)
+[`nltk`](https://www.nltk.org/)

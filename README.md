@@ -42,7 +42,4 @@ IDs that are randomly or sequentially generated.
 
 ## Usage
 
-This utility requires Python 3.7. and uses the following packages. 
-
-[`re`](https://docs.python.org/3/library/re.html)
-[`nltk`](https://www.nltk.org/)
+This utility requires Python 3.7 and the  packages [`re`](https://docs.python.org/3/library/re.html) and [`nltk`](https://www.nltk.org/).

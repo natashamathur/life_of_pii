@@ -5,7 +5,6 @@ import json
 
 
 def check_age(possible_age):
-    print(f'possible_age passed: {possible_age}')
     age_alone = possible_age.split(' ')[0]
     # print(f'age_alone calculated: {age_alone}, from possible_age passed: {possible_age}')
     if int(age_alone) < 111:
@@ -66,14 +65,13 @@ def verify_phone(possible_us):
     else:
         return False
 
-
+    
 def check_ip(possible_ip):
     nums = possible_ip.split('.')
     if all(num for num in nums) <= 255:
         return possible_ip
     else:
         return False
-
 
 def verify_ssn(possible_ssn):
     if len(possible_ssn) > 0:
@@ -83,13 +81,13 @@ def verify_ssn(possible_ssn):
         else:
             return False
 
+        
 def extract_names(match):
     token_line = nltk.sent_tokenize(match)
     token_line = [nltk.word_tokenize(sent) for sent in token_line]
     token_line = [nltk.pos_tag(sent) for sent in token_line][0]
 
     return " ".join((new_string for new_string, tag in token_line if tag in ("NNP", "NN")))
-
 
 
 def standardize_gender(possible_gender):
@@ -99,7 +97,7 @@ def standardize_gender(possible_gender):
     elif possible in ('boy', 'man', 'male'):
         return "Male"
 
-
+    
 def dea_checksum(dea):
     v = dea[-7:-1]
     check1, check2 = 0, 0
@@ -111,9 +109,8 @@ def dea_checksum(dea):
         return dea
     else:
         return False
-
-
-
+    
+    
 def australia_tax(n):
     total = 0
     for i in n:
@@ -122,7 +119,7 @@ def australia_tax(n):
     if check == 0:
         return n
 
-
+    
 def australia_medicare(n):
     checksum_weights = [1, 3, 7, 9, 1, 3, 7, 9]
     total = 0
@@ -132,7 +129,7 @@ def australia_medicare(n):
     if cs == n[8]:
         return n
 
-
+    
 def sweden_id(match):
     digits = re.sub("\D", "", (match)[:-1])
     checksum = int(match[-1:])
@@ -143,7 +140,7 @@ def sweden_id(match):
         if (sum_odd + sum_even) % 10 == checksum:
             return match
 
-
+        
 def south_korea_id(match):
     match = re.sub('[-]', '', match)
     checksum = match[-1:]
@@ -156,7 +153,7 @@ def south_korea_id(match):
     if remainder == int(checksum):
         return match[0:6] + "-" + match[7:13]
 
-
+    
 def south_africa_id(match):
     digits = re.sub("\D", "", match)
     if digits[:1] in ["3", "4", "5", "6", "8"]:
@@ -175,7 +172,7 @@ def south_africa_id(match):
     else:
         return False
 
-
+    
 def verify_chinaid(match):
     try:
         checksum = (1-2*int(match[:-1], 13)) % 11

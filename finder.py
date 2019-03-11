@@ -281,19 +281,71 @@ def pii_finder(ascii_file, file_format=True, output_file=None, ret=False):
 
 
 if __name__ == "__main__":
+    class Args():
+        pass
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--file')
-    parser.add_argument('--text')
-    parser.add_argument('--print_to_file')
-    args = parser.parse_args()
+    a = Args()
 
-    if args.file == None or not os.path.exists(args.file):
-        print("Please enter a valid file.",
-                file=sys.stderr)
-            sys.exit()
+    parser = argparse.ArgumentParser(description="Collect arguments for PII recognition.")
 
-         # check if file is blank
-    if os.path.getsize(args.file) == 0:
-        print("This file is blank.", file=sys.stderr)
-        sys.exit()
+    parser.add_argument('--display', action='store_true', default=True, help="Whether to display dictionary of PII found.")
+    parser.add_argument('--output_file', type=str, help="File name with JSON extension to which to write PII found.")
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--ascii_file', type=str, help="Valid file name from which to parse text for PII.")
+    group.add_argument('--ascii_text', type=str, help="ASCII text string to parse for PII.")
+
+    try:
+        args = parser.parse_args(namespace=a)
+    except argparse.ArgumentError or argparse.ArgumentTypeError as exc:
+        sys.exit("pii_recognition error: Please review arguements passed: {}".format(
+           args, exc.message))
+    except Exception as e:
+        sys.exit("pii_recognition error: Please review arguements passed: {}".format(e))
+
+    try:
+        # check that file is entered and exists
+        # if args.ascii_file == None and args.ascii_text == None:
+        #     print("Please enter a string or file to be checked for PII.",file=sys.stderr)
+        #     sys.exit("pii_recognition error: ")
+
+        # file_format is True if it is a file
+        if not a.output_file and not a.display:
+            parser.error("pii_recognition output error: PII must be displayed if output will not be written to a file.")
+
+        if a.ascii_file:
+            if os.path.exists(a.ascii_file) == 0:
+                sys.exit(f"File '{args.file}' is invalid.")
+            elif os.path.getsize(args.file) == 0:
+                sys.exit(f"File '{args.file}' is blank.")
+
+            else:
+                if a.output_file:
+                    pii_finder(a.ascii_file, output_file=a.output_file, ret=a.display, file_format=True)
+                else:
+                    pii_finder(a.ascii_file, ret=a.display, file_format=True)
+        elif a.ascii_text:
+            if a.output_file:
+                pii_finder(a.ascii_text, output_file=a.output_file, ret=a.display, file_format=False)
+            else:
+                pii_finder(a.ascii_text, ret=True, file_format=False)
+
+        # if args.ascii_text == None:
+        #     if os.path.exists(args.ascii_file) == 0:
+        #         sys.exit(f"File '{args.file}' is invalid.")
+        #
+        #      # check if file is blank
+        # if os.path.getsize(args.file) == 0:
+        #     sys.exit(f"File '{args.file}' is blank.")
+        # else:
+        #     file_format = False
+        #
+        # output_file,ret = None, False
+        # if args.print_to_file == True:
+        #     output_file = args.output_file
+        #     ret = True
+        #
+        # pii_finder(args.ascii, output_file=output_file, ret=ret, file_format)
+    except Exception as e:
+        # check for any exceptions not covered above
+        sys.exit(f"pii_recognition error: An unexpected error occured when processing your request: {e}")

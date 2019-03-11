@@ -191,6 +191,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--file')
+    parser.add_argument('--text')
+    parser.add_argument('--print_to_file')
     args = parser.parse_args()
 
     if args.file == None or not os.path.exists(args.file):
@@ -202,3 +204,5 @@ if __name__ == "__main__":
     if os.path.getsize(args.file) == 0:
         print("This file is blank.", file=sys.stderr)
         sys.exit()
+        
+    

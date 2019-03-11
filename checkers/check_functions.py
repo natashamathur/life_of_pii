@@ -5,6 +5,9 @@ import json
 
 
 def check_age(possible_age):
+    '''
+    Verify regex match ontains feasible PII of type: age
+    '''
     age_alone = possible_age.split(' ')[0]
     # print(f'age_alone calculated: {age_alone}, from possible_age passed: {possible_age}')
     if int(age_alone) < 111:
@@ -14,6 +17,9 @@ def check_age(possible_age):
 
 
 def verify_cc_match(match):
+    '''
+    Verify regex match ontains feasible PII of type: credit card
+    '''
     digits = re.sub("\D", "", match)
     if digits[:1] in ["3", "4", "5", "6", "8"]:
         if len(digits) >= 12 and len(digits) <= 19:
@@ -30,7 +36,9 @@ def verify_cc_match(match):
 
 
 def check_mac_local(mac_address):
-
+    '''
+    Verify regex match ontains feasible PII of type: local MAC address
+    '''
     first_two = mac_address[0:2]
     # combine binary representation of first and second characters in mac
     # address into one number,
@@ -44,6 +52,9 @@ def check_mac_local(mac_address):
 
 
 def verify_phone(possible_us):
+    '''
+    Verify regex match ontains feasible PII of type: US phone number
+    '''
     with open('area_codes.json') as f:
         valid_us_codes = json.loads(f.read())
 
@@ -65,8 +76,11 @@ def verify_phone(possible_us):
     else:
         return False
 
-    
+
 def check_ip(possible_ip):
+    '''
+    Verify regex match ontains feasible PII of type: IP address
+    '''
     nums = possible_ip.split('.')
     if all(num for num in nums) <= 255:
         return possible_ip
@@ -74,6 +88,9 @@ def check_ip(possible_ip):
         return False
 
 def verify_ssn(possible_ssn):
+    '''
+    Verify regex match ontains feasible PII of type: US Social Security Number
+    '''
     if len(possible_ssn) > 0:
         t = possible_ssn[0][:3]
         if int(t) < 772:
@@ -81,8 +98,11 @@ def verify_ssn(possible_ssn):
         else:
             return False
 
-        
+
 def extract_names(match):
+    '''
+    Verify regex match ontains feasible PII of type: name
+    '''
     token_line = nltk.sent_tokenize(match)
     token_line = [nltk.word_tokenize(sent) for sent in token_line]
     token_line = [nltk.pos_tag(sent) for sent in token_line][0]
@@ -91,14 +111,20 @@ def extract_names(match):
 
 
 def standardize_gender(possible_gender):
+    '''
+    Standardize regex match for PII of type: Gender
+    '''
     possible = possible_gender.lower()
     if possible in ('girl', 'woman', 'female'):
         return "Female"
     elif possible in ('boy', 'man', 'male'):
         return "Male"
 
-    
+
 def dea_checksum(dea):
+    '''
+    Verify regex match ontains feasible PII of type: Medical Doctor DEA Registration Number
+    '''
     v = dea[-7:-1]
     check1, check2 = 0, 0
     check1 = int(v[0])+ int(v[2]) + int(v[4])
@@ -109,9 +135,12 @@ def dea_checksum(dea):
         return dea
     else:
         return False
-    
-    
+
+
 def australia_tax(n):
+    '''
+    Verify regex match ontains feasible PII of type: Australia Tax ID
+    '''
     total = 0
     for i in n:
         total = total + int(i)
@@ -119,8 +148,11 @@ def australia_tax(n):
     if check == 0:
         return n
 
-    
+
 def australia_medicare(n):
+    '''
+    Verify regex match ontains feasible PII of type: Austraila Medicare ID Number
+    '''
     checksum_weights = [1, 3, 7, 9, 1, 3, 7, 9]
     total = 0
     for i in range(8):
@@ -129,8 +161,11 @@ def australia_medicare(n):
     if cs == n[8]:
         return n
 
-    
+
 def sweden_id(match):
+    '''
+    Verify regex match ontains feasible PII of type: Sweden National ID
+    '''
     digits = re.sub("\D", "", (match)[:-1])
     checksum = int(match[-1:])
     if digits[:1] in ["3", "4", "5", "6", "8"]:
@@ -140,8 +175,11 @@ def sweden_id(match):
         if (sum_odd + sum_even) % 10 == checksum:
             return match
 
-        
+
 def south_korea_id(match):
+    '''
+    Verify regex match ontains feasible PII of type: South Korea National ID
+    '''
     match = re.sub('[-]', '', match)
     checksum = match[-1:]
     mults = [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5]
@@ -153,8 +191,11 @@ def south_korea_id(match):
     if remainder == int(checksum):
         return match[0:6] + "-" + match[7:13]
 
-    
+
 def south_africa_id(match):
+    '''
+    Verify regex match ontains feasible PII of type: South Africa National ID
+    '''
     digits = re.sub("\D", "", match)
     if digits[:1] in ["3", "4", "5", "6", "8"]:
         if len(digits) >= 12 and len(digits) <= 19:
@@ -172,8 +213,11 @@ def south_africa_id(match):
     else:
         return False
 
-    
+
 def verify_chinaid(match):
+    '''
+    Verify regex match ontains feasible PII of type: China National ID
+    '''
     try:
         checksum = (1-2*int(match[:-1], 13)) % 11
     except ValueError:
@@ -192,6 +236,9 @@ def verify_chinaid(match):
 
 
 def hong_kong_id(match):
+    '''
+    Verify regex match ontains feasible PII of type: Hong Kong National ID
+    '''
     match = re.sub('[()]', '', match)
     checksum = match [-1:]
     match = match [:-1]
@@ -222,8 +269,11 @@ def hong_kong_id(match):
 esp_letters = ['T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N',
                'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E']
 
-    
+
 def check_spain_nif(nif):
+    '''
+    Verify regex match ontains feasible PII of type: Spain National ID Number (Foreigners)
+    '''
     nif = nif.replace("-", "")
     nif_num = int(nif[:-1])
     r = nif_num % 23
@@ -232,8 +282,11 @@ def check_spain_nif(nif):
         return True
     else:
         return False
-    
+
 def check_spain_nie(nie):
+    '''
+    Verify regex match ontains feasible PII of type: Spain National ID
+    '''
     nie = nie.replace("-", "")
     nie = nie.replace("X", "0")
     nie = nie.replace("Y", "1")
@@ -247,6 +300,9 @@ def check_spain_nie(nie):
         return False
 
 def uk_nhs_id(match):
+    '''
+    Verify regex match ontains feasible PII of type: UK National Health Services ID Number
+    '''
     mults = [10, 9, 8, 7, 6, 5, 4, 3, 2]
     digits = re.sub("\D", "", (match)[:-1])
     checksum = int(match[-1:])
@@ -263,6 +319,9 @@ def uk_nhs_id(match):
             return match
 
 def canadian_insur_id(match):
+    '''
+    Verify regex match ontains feasible PII of type: Canadian Insurance Number
+    '''
     digits = re.sub("\D", "", (match))
     total = 0
     for x in range (0, len(digits)):
@@ -278,8 +337,11 @@ def canadian_insur_id(match):
             total += int(digits[x])
     if total % 10 == 0:
         return match
-            
+
 def mexico_curp(match):
+    '''
+    Verify regex match ontains feasible PII of type: Mexico National ID
+    '''
     characters = match[:-1]
     checksum = int(match[-1:])
     chars = '0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ'
@@ -295,8 +357,11 @@ def mexico_curp(match):
     elif remainder == checksum:
         return match
 
-        
+
 def french_insee_id(match):
+    '''
+    Verify regex match ontains feasible PII of type: France National ID
+    '''
     digits = re.sub("\D", "", (match[:-2]))
     checksum = match[-2:]
     remainder = 97 - (int(digits) % 97)
@@ -304,17 +369,20 @@ def french_insee_id(match):
         return digits + " " + checksum
     elif remainder == int(checksum):
         return digits + " " + checksum
-    
-    
+
+
 def polish_pesel(match):
+    '''
+    Verify regex match ontains feasible PII of type: Polish National ID
+    '''
     digits = re.sub("\D", "", (match[:-1]))
     checksum = int(match[-1:])
     total = 0
-    
+
     mults = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3]
     for x in range(0, len(digits)):
         total += mults[x] * int(digits[x])
     remainder = 10 - (total % 10)
-    
+
     if remainder == checksum:
         return match

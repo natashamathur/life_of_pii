@@ -190,16 +190,31 @@ def pii_finder(ascii_file, output_file=None, ret=False):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--ascii')
+    parser.add_argument('--ascii_file', action="store_true")
+    parser.add_argument('--ascii_text', action="store_true")
     parser.add_argument('--print_to_file')
     parser.add_argument('--output_file')
     args = parser.parse_args()
+    
+    # check that file is entered and exists
+    if args.ascii == None and args.ascii_text == None:
+        print("Please enter a string or file to be checked for PII.",file=sys.stderr)
+        sys.exit()
+
+    # file_format is True if it is a file
+    file_format = True 
+    if args.ascii_text == None:   
+        if os.path.exists(args.ascii_file) or os.path.getsize(args.ascii_file) == 0:
+            print("This file is invalid.", file=sys.stderr)
+            sys.exit()
+    else:
+        file_format = False 
     
     output_file,ret = None, False
     if args.print_to_file == True:
         output_file = args.output_file
         ret = True
         
-    pii_finder(args.ascii, output_file=output_file, ret=ret)
+    pii_finder(args.ascii, output_file=output_file, ret=ret, file_format)
 
     

@@ -190,19 +190,16 @@ def pii_finder(ascii_file, output_file=None, ret=False):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file')
-    parser.add_argument('--text')
+    parser.add_argument('--ascii')
     parser.add_argument('--print_to_file')
+    parser.add_argument('--output_file')
     args = parser.parse_args()
-
-    if args.file == None or not os.path.exists(args.file):
-        print("Please enter a valid file.",
-                file=sys.stderr)
-            sys.exit()
-
-         # check if file is blank
-    if os.path.getsize(args.file) == 0:
-        print("This file is blank.", file=sys.stderr)
-        sys.exit()
+    
+    output_file,ret = None, False
+    if args.print_to_file == True:
+        output_file = args.output_file
+        ret = True
         
+    pii_finder(args.ascii, output_file=output_file, ret=ret)
+
     

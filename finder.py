@@ -3,6 +3,7 @@ import os
 import sys
 import json
 import nltk
+import argparse
 from collections import defaultdict
 
 from checkers.check_functions import *
@@ -186,3 +187,18 @@ def pii_finder(ascii_file, output_file=None, ret=False):
             sys.exit(f"pii_recognition error: An error occurred during text parsing: {e}")
 
 
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--file')
+    args = parser.parse_args()
+
+    if args.file == None or not os.path.exists(args.file):
+        print("Please enter a valid file.",
+                file=sys.stderr)
+            sys.exit()
+
+         # check if file is blank
+    if os.path.getsize(args.file) == 0:
+        print("This file is blank.", file=sys.stderr)
+        sys.exit()

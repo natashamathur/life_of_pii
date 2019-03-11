@@ -152,7 +152,7 @@ def parse_line(row, line_text, line_length, corpus, detected_dict, file_obj=None
 
 VERIFY_CORPUS = {
 
-    # 'AGE': (r"\b([1-9]?\d{1,2})\b|\b([0]?[1-9]{1,2})\b|\b(\d{1,3} (years|ans|y.o.|años|anni|Jahre))\b|(?=\b(Age|Alter)[:\s\,\-]{1,2})(\d{1,3})\b", check_age),
+    'AGE': (r"(?<![\.\+\-\(])\b(\d{1,2}\s(years|ans|y.o.|años|anni|Jahre))(?![\-\:])\b|(?<![\.\+\-\(])(?=((Age|Alter)[\s\:]{0,2}))([0-1]\d{1,2})(?![\-\:])\b|(?<![\.\+\-\(])\b([0-1]?\d{1,2})(?![\-\:])\b|(?<![\.\+\-\(])\b([0]?[1-9]{1,2})(?![\-\:])\b", check_age),
     'SSN': (r"\b([0-9]{3}\-[0-9{2}\-[0-9]{4}])\b", verify_ssn),
     'IP_ADDRESS': (r"\b([0-9]{3}.[0-9]{3}.[0-9]{3}.[0-9]{3})\b", check_ip),
     'GENDER': (r"\b(male)\b|\b(female)\b|\b(man)\b|\b(woman)\b|\b(girl)\b|\b(boy)\b", standardize_gender),
@@ -176,7 +176,6 @@ VERIFY_CORPUS = {
 
 
 REGEX_ONLY_CORPUS = {
-    # 'AGE': (r"\b([1-9]?\d{1,2})\b|\b([0]?[1-9]{1,2})\b|\b(\d{1,3} (years|ans|y.o.|años|anni|Jahre))\b|(?=\b(Age|Alter)[:\s\,\-]{1,2})(\d{1,3})\b", check_age),
     'AUSTRALIA_MEDICARE_NUMBER' : r"[2-6][0-9]{8}",
     'EMAIL_ADDRESS': r"([a-zA-Z0-9\_\'][\.'\\a-zA-Z0-9_]*[\'\_a-zA-Z0-9]@[a-zA-Z0-9]+\.(com|edu|gov|org|net|ca))",
     'PHONE_NUMBER_INT': r"\b\+?((\d{2}[-\.\s]??){1,3}\d{3}[-\.\s]??\d{5})\b|(?<![-\+])([\(]??\d{3}\)?[-\.\s/]{0,3}\d{3}[-\.\s]??\d{5})\b",

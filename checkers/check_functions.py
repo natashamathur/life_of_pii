@@ -8,7 +8,7 @@ def check_age(possible_age):
     '''
     Verify regex match ontains feasible PII of type: age
     '''
-    age_alone = possible_age.split(' ')[0]
+    age_alone = possible_age.split(' ').split(':')[0]
     # print(f'age_alone calculated: {age_alone}, from possible_age passed: {possible_age}')
     if int(age_alone) < 111:
         return age_alone

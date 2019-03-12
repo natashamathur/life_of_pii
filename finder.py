@@ -185,7 +185,8 @@ REGEX_ONLY_CORPUS = {
     'US_VIN_NUMBER': r"\b([(A-Z)(0-9)^IOQ]{17})\b",
     'GERMANY_PASSPORT': r"\b([(0-9)C|F|G|H|J-N|P|R|T|V|W-Z]{9})\b",
     'FRANCE_PASSPORT': r"\b([0-9]{2}[A-Za-z]{2}[0-9]{5})\b",
-    'UK_INSURANCE_ID': r"\b(([A-CGHJ-PR-TW-Z]{2})([0-9]{6})[A-D])\b"
+    'UK_INSURANCE_ID': r"\b(([A-CGHJ-PR-TW-Z]{2})([0-9]{6})[A-D])\b",
+    'PHYSICAL_ADDRESS': r"\b(\d{1,6}\s([a-zA-z\.\s\-]+\s){0,3}([a-zA-z0-9\s]+[a-zA-Z\.])([\,\s]{0,2})?(road|street|avenue|boulevard|lane|drive|way|court|plaza|terrace|colony|close)[\,\s]{1,2}((Apt|Apartment|Floor|Suite|House)[\s\:]{1,2}\d{0,6}[\,\s]{1,2})?(([a-zA-Z]+[\s\-]?){1,4})?([\,\s]{0,2})?([A-Za-z]{2}|[a-zA-Z]+[\s\-])?([\,\s]{0,2}([0-9\-]{1,10})|[A-Z0-9]{3}\s[A-Z0-9]{3})?)\b"
     }
 
 

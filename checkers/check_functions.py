@@ -103,11 +103,14 @@ def extract_names(match):
     '''
     Verify regex match ontains feasible PII of type: name
     '''
-    token_line = nltk.sent_tokenize(match)
+    token_line = nltk.sent_tokenize(match.string)
     token_line = [nltk.word_tokenize(sent) for sent in token_line]
     token_line = [nltk.pos_tag(sent) for sent in token_line][0]
-
-    return " ".join((new_string for new_string, tag in token_line if tag in ("NNP", "NN")))
+    for (new_string, tag) in token_line:
+        if "NN" in tag:
+                name += new_string
+                name += " "
+    return name
 
 
 def standardize_gender(possible_gender):

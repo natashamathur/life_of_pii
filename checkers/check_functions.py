@@ -8,7 +8,7 @@ def check_age(possible_age):
     '''
     Verify regex match ontains feasible PII of type: age
     '''
-    age_alone = possible_age.split(' ').split(':')[0]
+    age_alone = possible_age.split(' ')[0]
     # print(f'age_alone calculated: {age_alone}, from possible_age passed: {possible_age}')
     if int(age_alone) < 111:
         return age_alone
@@ -106,11 +106,14 @@ def extract_names(match):
     token_line = nltk.sent_tokenize(match)
     token_line = [nltk.word_tokenize(sent) for sent in token_line]
     token_line = [nltk.pos_tag(sent) for sent in token_line][0]
-    for (new_string, tag) in token_line:
-        if "NN" in tag:
-                name += new_string
-                name += " "
-    return name
+
+    return " ".join((new_string for new_string, tag in token_line if tag in ("NNP", "NN")))
+    
+    # for (new_string, tag) in token_line:
+    #     if "NN" in tag:
+    #             name += new_string
+    #             name += " "
+    # return name
 
 
 def standardize_gender(possible_gender):
@@ -352,7 +355,6 @@ def mexico_curp(match):
     for x in range(0, len(characters)):
         total += (x - 1) * chars.index(characters[x])
     remainder = total % 11
-    print(remainder)
     if remainder == 10 & checksum == "A":
         return match
     elif remainder == 11 & checksum == 0:
@@ -367,11 +369,14 @@ def french_insee_id(match):
     '''
     digits = re.sub("\D", "", (match[:-2]))
     checksum = match[-2:]
-    remainder = 97 - (int(digits) % 97)
-    if remainder == 0 and int(checksum) == 97:
-        return digits + " " + checksum
-    elif remainder == int(checksum):
-        return digits + " " + checksum
+    if (checksum != '') and (digits != ''):
+        remainder = 97 - (int(digits) % 97)
+        if remainder == 0 and int(checksum) == 97:
+            return digits + " " + checksum
+        elif remainder == int(checksum):
+            return digits + " " + checksum
+    else:
+        return False
 
 
 def polish_pesel(match):

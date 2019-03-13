@@ -35,7 +35,7 @@ $ python3.6 finder.py --ascii_file 'FILENAME' --display
 This is the command line command to run this utilty on a string (pii_string) and save the output to the file (OUTPUT_FILE).
 
 ```
-$ python3.6 finder.py --ascii_file "I am 90 years old and I have an SSN of 310-74-3223" --output_file OUTPUT_FILE
+$ python3.6 finder.py --ascii_string "I am 90 years old and I have an SSN of 310-74-3223" --output_file OUTPUT_FILE
 ```
 
 

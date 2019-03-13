@@ -50,6 +50,9 @@ documents with large quantities of data in an efficient manner. For example,
 this could be used to check public-facing documents prior to publication to 
 ensure that PII is not inadvertently exposed.
 
+The [`fake_pii.txt`](https://github.com/natashamathur/life_of_pii/blob/master/fake_pii.txt) is provided as an example to showcase a potential use of the utility as a categorizer of scattered PII within a single document.
+
+
 ## Methodology
 The PII utility relies heavily on the `re` library for regex text matching, and
 passes potential PII matches through a series of verification functions to 

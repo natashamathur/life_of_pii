@@ -190,13 +190,11 @@ def pii_finder(ascii_file, output_file=None, file_format=True):
     Parse text in a given ASCII text file or text string for potential PII
     Inputs:
         ascii_file: (str) Valid filename, or a string of ASCII text
-        file_format: (boolean) Whether ascii_file is a file name, or a string to
-            be parsed. Default is True.
         output_file: (str) JSON file to which dictionary of PII recognized in
             ascii_file should be written
-        ret: (boolean) Whether to return dictionary of PII recognized in
-            ascii_file
-    Returns: None. Writes output to output_file
+        file_format: (boolean) Whether ascii_file is a file name, or a string to
+            be parsed. Default is True.
+    Returns: None. Writes output to output_file.
     '''
     # return ascii text as dictionary of numbered rows
     if not output_file:

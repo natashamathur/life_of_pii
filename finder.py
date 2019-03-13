@@ -310,9 +310,9 @@ if __name__ == "__main__":
 
         if a.ascii_file:
             if os.path.exists(a.ascii_file) == 0:
-                sys.exit(f"File '{args.file}' is invalid.")
-            elif os.path.getsize(args.file) == 0:
-                sys.exit(f"File '{args.file}' is blank.")
+                sys.exit(f"File '{a.ascii_file}' is invalid.")
+            elif os.path.getsize(a.ascii_file) == 0:
+                sys.exit(f"File '{a.ascii_file}' is blank.")
 
             else:
                 if a.output_file:

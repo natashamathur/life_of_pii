@@ -65,14 +65,14 @@ def read_ascii(ascii_file, output_file=None, f=None, file_format=True, ret=False
     # reformat list of text strings into dictionary
     try:
         if (len(text_as_str) > 10) and ret:
-            logging.warn("ASCII text passed is more than 10 lines long. A preview will be diplayed.")
+            print("ASCII text passed is more than 10 lines long. A preview will be diplayed.")
             
             if not output_file:
                 basename, _ = os.path.splitext(ascii_file)
-                logging.warn(f"Full output will be written to slice_of_pii_{basename}.json")
+                print(f"Full output will be written to slice_of_pii_{basename}.json")
                 output_file = f"slice_of_pii_{basename}.json"
             else:
-                logging.warn(f"Full output will be written to {output_file}.")
+                print(f"Full output will be written to {output_file}.")
         text_by_row = {row: (val, len(val)) for row, val in enumerate(text_as_str)}
         
         return text_by_row, ret, output_file
@@ -280,7 +280,13 @@ def pii_finder(ascii_file, output_file=None, file_format=True, ret=False):
             o.close()
 
             if ret:
-                return detected
+                if len(detected) < 11:
+                    preview = take(10, d.iteritems())
+                    print(preview)
+                elif len(detected) == 0:
+                    print(f"No PII was recognized in '{ascii_file}'.")
+                else:
+                    print(detected)
 
         except Exception as e:
             sys.exit(f"pii_recognition error: An unexpected error occurred in file write completion: {e}.")
@@ -296,7 +302,14 @@ def pii_finder(ascii_file, output_file=None, file_format=True, ret=False):
                 detected = parse_line(row, line_text, line_length, corpus=VERIFY_CORPUS,
                                       detected_dict=detected, verify=True)
 
-            return detected
+            if ret:
+                if len(detected) < 11:
+                    preview = take(10, d.iteritems())
+                    print(preview)
+                elif len(detected) == 0:
+                    print(f"No PII was recognized in '{ascii_file}'.")
+                else:
+                    print(detected)
 
         except Exception as e:
             sys.exit(f"pii_recognition error: An error occurred during text PII parsing: {e}")

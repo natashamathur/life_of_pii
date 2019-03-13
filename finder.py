@@ -3,24 +3,11 @@ import os
 import sys
 import json
 import nltk
-import logging
 import argparse
 import warnings
 from collections import defaultdict
 
 from checkers.check_functions import *
-
-logger = logging.getLogger('pii')
-sh = logging.StreamHandler(sys.stdout)
-logger.addHandler(sh)
-logger.setLevel(logging.INFO)
-
-# LOG_CONFIG = {'handlers':{'console':{'class':'logging.StreamHandler',
-#                                      'formatter':'debug',
-#                                      'level':logging.DEBUG}},
-#               'root':{'handlers':('console'), 'level':'INFO'}}
-# logging.config.dictConfig(LOG_CONFIG)
-
 
 def read_ascii(ascii_file, output_file=None, f=None, file_format=True, ret=False):
     '''

@@ -24,15 +24,15 @@ to a file), to allow for flexible interaction with possible PII.
 
 This utility requires Python 3.7 and the packages [`re`](https://docs.python.org/3/library/re.html) and [`nltk`](https://www.nltk.org/).
 
-The utility can be run on a file or a string, and can output the results to a dictionary or file. The input and output options are provided so that the utility can be more easily integrated as part of a larger codebase if needed, such as an API. 
+The utility can be run on either a file or a string, outputting the results to either a dictionary or file. These input and output functionalities are provided so that the utility can be more easily integrated as part of a larger codebase if needed, such as an API. 
 
-For example, this is the command line command to run the utilty on a file (FILENAME) and return a dictionary. 
+Below is an example of a command line input to run the utilty on a file (FILENAME) then return a dictionary. 
 
 ```
 $ python3.6 finder.py --ascii_file 'FILENAME' --display
 ```
 
-This is the command line command to run this utilty on a string (pii_string) and save the output to the file (OUTPUT_FILE).
+Below is an example of a command line input to run this utilty on a string (pii_string) and subsequently save the output to the file (OUTPUT_FILE).
 
 ```
 $ python3.6 finder.py --ascii_string "I am 90 years old and I have an SSN of 310-74-3223" --output_file OUTPUT_FILE

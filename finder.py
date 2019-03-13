@@ -169,7 +169,7 @@ VERIFY_CORPUS = {
     'UK_NHS_ID': (r"\b([0-9]{3}\s?[0-9]{3}\s?[0-9]{4})\b", uk_nhs_id),
     'CANADIAN_INSURANCE_ID': (r"\b([0-9]{3}\s?[0-9]{3}\s?[0-9]{3})\b", canadian_insur_id),
     'MEXICAN_CURP_ID': (r"\b([A-Z]{4}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[HM][A-Z]{5}[0-9]{2})\b", mexico_curp),
-    'FRENCH_NATIONAL_INSEE_ID': (r"\b([12][0-9]{2}(0[1-9]|1[0-2])[0-9]{4,6}[0-9]{3}\s?[0[1-9]|[1-8][0-9]|9[0-7]])\b", french_insee_id),
+    'FRENCH_NATIONAL_INSEE_ID': (r"\b(([12][0-9]{2})(0[1-9]|1[0-2])([0-9]{4,6})([0-9]{3})(\s?)([0[1-9]|[1-8][0-9]|9[0-7]))\b", french_insee_id),
     'POLISH_PESEL_ID': (r"\b([0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[0-9]{5})\b", polish_pesel)
     }
 

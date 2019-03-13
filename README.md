@@ -10,8 +10,7 @@ location in the file (row and character position in the row), and text
 immediately surrounding match text. This output format enables the user to 
 easily verify the results and locate associated information. 
 
-The utility can also return a dictionary with the relevant data (versus writing 
-to a file), to allow for flexible interaction with possible PII.
+The utility can also display a dictionary of the relevant PII data found (versus writing to a file) for shorter text inputs (up to 10 lines) to allow for more flexible interaction with possible PII. A 10-line preview of PII found is displayed for longer inputs.
 
 ## Authors
 
@@ -22,18 +21,19 @@ to a file), to allow for flexible interaction with possible PII.
 
 ## Getting Started
 
-This utility requires Python 3.7 and the packages [`re`](https://docs.python.org/3/library/re.html) and [`nltk`](https://www.nltk.org/).
+This utility requires at least Python 3.6 and the packages [`re`](https://docs.python.org/3/library/re.html) and [`nltk`](https://www.nltk.org/).
 
 The utility can be run on a file or a string, and can output the results to a dictionary or file. The input and output options are provided so that the utility can be more easily integrated as part of a larger codebase if needed, such as an API. 
 
-For example, this is the command line command to run the utilty on a file (FILENAME) and return a dictionary. 
+For example, 
+### Examples
 
+To run the utilty on a file (FILENAME) and display a dictionary of PII found:
 ```
 $ python3.6 finder.py --ascii_file 'FILENAME' --display
 ```
 
-This is the command line command to run this utilty on a string (pii_string) and save the output to the file (OUTPUT_FILE).
-
+To run this utilty on a text string and save the output to the file (OUTPUT_FILE).
 ```
 $ python3.6 finder.py --ascii_string "I am 90 years old and I have an SSN of 310-74-3223" --output_file OUTPUT_FILE
 ```
@@ -41,7 +41,7 @@ $ python3.6 finder.py --ascii_string "I am 90 years old and I have an SSN of 310
 ## File Descriptions
 
  - Main Utility: [`finder.py`](https://github.com/natashamathur/life_of_pii/blob/master/finder.py)
- - Ancilliary Code: [`checkers`](https://github.com/natashamathur/life_of_pii/tree/master/checkers) [`area_codes.json`](https://github.com/natashamathur/life_of_pii/blob/master/area_codes.json) 
+ - Ancilliary Code: [`checkers` directory](https://github.com/natashamathur/life_of_pii/tree/master/checkers) [`area_codes.json`](https://github.com/natashamathur/life_of_pii/blob/master/area_codes.json) 
  - Used for Testing: [`fake_pii.txt`](https://github.com/natashamathur/life_of_pii/blob/master/fake_pii.txt) [`found.json`](https://github.com/natashamathur/life_of_pii/blob/master/found.json)
 
 ## Uses
@@ -91,7 +91,7 @@ IDs that are randomly or sequentially generated.
 - Swedish National ID Number
 - UK NHS ID Number
 
-**REGEXed PII**
+**REGEX'ed PII**
 - Age
 - American VIN Number
 - Australian Medicare Number

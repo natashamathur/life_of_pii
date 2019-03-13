@@ -10,8 +10,6 @@ location in the file (row and character position in the row), and text
 immediately surrounding match text. This output format enables the user to 
 easily verify the results and locate associated information. 
 
-The utility can also display a dictionary of the relevant PII data found (versus writing to a file) for shorter text inputs (up to 10 lines) to allow for more flexible interaction with possible PII. A 10-line preview of PII found is displayed for longer inputs.
-
 ## Authors
 
 - [Andrew Deng](https://github.com/CAPPAndrew)
@@ -23,17 +21,16 @@ The utility can also display a dictionary of the relevant PII data found (versus
 
 This utility requires at least Python 3.6 and the packages [`re`](https://docs.python.org/3/library/re.html) and [`nltk`](https://www.nltk.org/).
 
-The utility can be run on either a file or a string, outputting the results to either a dictionary or file. These input and output functionalities are provided so that the utility can be more easily integrated as part of a larger codebase if needed, such as an API. 
+The utility can be run on either a file or a string, and outputs the results into a file. 
 
 
 ### Examples
-Below is an example of a command line input to run the utilty on the file **FILENAME** then return a dictionary. 
-To run the utilty on a file (FILENAME) and display a dictionary of PII found:
+Below is an example of a command line input to run the utilty on the file **FILENAME** and save the output to the file **OUTPUT_FILE**
 ```
-$ python3.6 finder.py --ascii_file 'FILENAME' --display
+$ python3.6 finder.py --ascii_file 'FILENAME' --output_file OUTPUT_FILE
 ```
 
-Below is an example of a command line input to run this utilty on the string **pii_string** and subsequently save the output to the file **OUTPUT_FILE**.
+Below is an example of a command line input to run this utilty on the string **pii_string** and save the output to the file **OUTPUT_FILE**.
 ```
 $ python3.6 finder.py --ascii_string "I am 90 years old and I have an SSN of 310-74-3223" --output_file OUTPUT_FILE
 ```

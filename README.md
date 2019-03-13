@@ -38,6 +38,11 @@ This is the command line command to run this utilty on a string (pii_string) and
 $ python3.6 finder.py --ascii_string "I am 90 years old and I have an SSN of 310-74-3223" --output_file OUTPUT_FILE
 ```
 
+## File Descriptions
+
+ - Main Utility: [`finder.py`](https://github.com/natashamathur/life_of_pii/blob/master/finder.py)
+ - Ancilliary Code: [`checkers`](https://github.com/natashamathur/life_of_pii/tree/master/checkers) [`area_codes.json`](https://github.com/natashamathur/life_of_pii/blob/master/area_codes.json) 
+ - Used for Testing: [`fake_pii.txt`](https://github.com/natashamathur/life_of_pii/blob/master/fake_pii.txt) [`found.json`](https://github.com/natashamathur/life_of_pii/blob/master/found.json)
 
 ## Uses
 This utility provides the ability to extract multiple types of PII from 

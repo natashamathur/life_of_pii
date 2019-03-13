@@ -106,3 +106,4 @@ IDs that are randomly or sequentially generated.
 - International Phone Number
 - MAC Address
 - UK Insurance ID Number
+- Physical Address

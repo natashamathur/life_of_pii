@@ -3,35 +3,21 @@ import os
 import sys
 import json
 import nltk
-import logging
 import argparse
 import warnings
 from collections import defaultdict
 
 from checkers.check_functions import *
 
-logger = logging.getLogger('pii')
-sh = logging.StreamHandler(sys.stdout)
-logger.addHandler(sh)
-logger.setLevel(logging.INFO)
 
-# LOG_CONFIG = {'handlers':{'console':{'class':'logging.StreamHandler',
-#                                      'formatter':'debug',
-#                                      'level':logging.DEBUG}},
-#               'root':{'handlers':('console'), 'level':'INFO'}}
-# logging.config.dictConfig(LOG_CONFIG)
-
-
-def read_ascii(ascii_file, output_file=None, f=None, file_format=True, ret=False):
+def read_ascii(ascii_file, f=None, file_format=True):
     '''
     Reformat ASCII text string or ASCII text file for PII parssing and validation
-
     Inputs:
         ascii_file: (str) Valid filename, or a string of ASCII text
         f: (I/O Object) File object. Default is None.
         file_format: (boolean) Whether ascii_file is a file name, or a string to
             be parsed. Default is True.
-
     Returns: Dictionary with row number (from file/ text
     srting) as keys and a tuple of line text and line length (in characters)
     as values
@@ -64,18 +50,8 @@ def read_ascii(ascii_file, output_file=None, f=None, file_format=True, ret=False
 
     # reformat list of text strings into dictionary
     try:
-        if (len(text_as_str) > 10) and ret:
-            print("ASCII text passed is more than 10 lines long. A preview will be diplayed.")
-            
-            if not output_file:
-                basename, _ = os.path.splitext(ascii_file)
-                print(f"Full output will be written to slice_of_pii_{basename}.json")
-                output_file = f"slice_of_pii_{basename}.json"
-            else:
-                print(f"Full output will be written to {output_file}.")
         text_by_row = {row: (val, len(val)) for row, val in enumerate(text_as_str)}
-        
-        return text_by_row, ret, output_file
+        return text_by_row
     except Exception as e:
         sys.exit(f"pii_recognition error: An error occurred when formatting text for PII parsing: {e}")
 
@@ -85,7 +61,6 @@ def format_plaintext(info_type, match_found, line_text, line_length, start, end)
     Truncate text lines containing a PII match with length of more than 50
     characters to include only 20 characters before and 20 characters after
     match text
-
     Inputs:
         info_type: (str) Type of PII match found
         match_found: (re match object text) The text of a PII match
@@ -95,7 +70,6 @@ def format_plaintext(info_type, match_found, line_text, line_length, start, end)
             line text in which PII match was found
         end: (re match object property) Ending character position in
             line text in which PII match was found
-
     Returns: PII match tuple containing PII type, text, character start and
         end position, and immediately surrounding text for the potential PII
         found
@@ -116,7 +90,6 @@ def parse_line(row, line_text, line_length, corpus, detected_dict, file_obj=None
     Helper function for pii_finder. Parses an individual line of text for PII
     types that are determined solely by Regex without additional verification,
     and then for PII types that require verification via an additional function.
-
     Inputs:
         row: (int) Text row number
         line_text: (str) Text line in which PII match was found
@@ -133,7 +106,6 @@ def parse_line(row, line_text, line_length, corpus, detected_dict, file_obj=None
             file. Default is None.
         verify: (boolean) Whether to use the verification or no verification
             corpus. Default is False (REGEX_ONLY_CORPUS).
-
     Returns: An updated detected_dict
     '''
     if verify:
@@ -213,10 +185,9 @@ REGEX_ONLY_CORPUS = {
 
 
 
-def pii_finder(ascii_file, output_file=None, file_format=True, ret=False):
+def pii_finder(ascii_file, output_file=None, file_format=True):
     '''
     Parse text in a given ASCII text file or text string for potential PII
-
     Inputs:
         ascii_file: (str) Valid filename, or a string of ASCII text
         file_format: (boolean) Whether ascii_file is a file name, or a string to
@@ -225,46 +196,46 @@ def pii_finder(ascii_file, output_file=None, file_format=True, ret=False):
             ascii_file should be written
         ret: (boolean) Whether to return dictionary of PII recognized in
             ascii_file
-
-    Returns: Dictionary containing row nunmbers as keys and dictionaries of
-        PII types and PII of each type found in that row as values
+    Returns: None. Writes output to output_file
     '''
     # return ascii text as dictionary of numbered rows
-    text_by_row, ret, output_file = read_ascii(ascii_file, file_format=file_format)
+    if not output_file:
+        sys.exit(f"pii_recognition output error: PII must written to a file.")
 
-    # initiate dictionary to capture findings
-    detected = defaultdict(dict)
-
-    if output_file:
+    else:
         try:
             _, ext = os.path.splitext(output_file)
 
             if ext != '.json':
                 sys.exit(f"pii_recognition output file error: Output file must be a '.json' file, not '{ext}'.")
 
-            else:
-                # open output file
-                o = open(output_file, 'w')
+            text_by_row = read_ascii(ascii_file, file_format=file_format)
 
-                # open list in JSON file
-                o.write("[{")
-                for row, (line_text, line_length) in text_by_row.items():
+            # initiate dictionary to capture findings
+            detected = defaultdict(dict)
+            
+            # open output file
+            o = open(output_file, 'w')
 
-                    try:
-                        # parse row for PII types that are determined solely by Regex
-                        detected =  parse_line(row, line_text, line_length, corpus=REGEX_ONLY_CORPUS,
-                                               detected_dict=detected, file_obj=o, verify=False)
+            # open list in JSON file
+            o.write("[{")
+            for row, (line_text, line_length) in text_by_row.items():
 
-                        # parse row for PII types that require verification via an additional function
-                        detected = parse_line(row, line_text, line_length, corpus=VERIFY_CORPUS,
-                                              detected_dict=detected, file_obj=o, verify=True)
-                    except Exception as e:
-                        sys.exit(f"pii_recognition error: An error occurred during text parsing in row {row}: {e}")
+                try:
+                    # parse row for PII types that are determined solely by Regex
+                    detected =  parse_line(row, line_text, line_length, corpus=REGEX_ONLY_CORPUS,
+                                           detected_dict=detected, file_obj=o, verify=False)
 
-                    if detected[row]:
-                        o.write(f'"{str(row)}":')
-                        o.write(json.dumps(detected[row]))
-                        o.write(",\n")
+                    # parse row for PII types that require verification via an additional function
+                    detected = parse_line(row, line_text, line_length, corpus=VERIFY_CORPUS,
+                                          detected_dict=detected, file_obj=o, verify=True)
+                except Exception as e:
+                    sys.exit(f"pii_recognition error: An error occurred during text parsing in row {row}: {e}")
+
+                if detected[row]:
+                    o.write(f'"{str(row)}":')
+                    o.write(json.dumps(detected[row]))
+                    o.write(",\n")
 
         except Exception as e:
             sys.exit(f"pii_recognition error: An error occurred when writing to output file '{output_file}': {e}")
@@ -279,40 +250,9 @@ def pii_finder(ascii_file, output_file=None, file_format=True, ret=False):
             o.truncate()
             o.close()
 
-            if ret:
-                if len(detected) < 11:
-                    preview = take(10, d.iteritems())
-                    print(preview)
-                elif len(detected) == 0:
-                    print(f"No PII was recognized in '{ascii_file}'.")
-                else:
-                    print(detected)
 
         except Exception as e:
             sys.exit(f"pii_recognition error: An unexpected error occurred in file write completion: {e}.")
-
-    else:
-        try:
-            for row, (line_text, line_length) in text_by_row.items():
-                # parse row for PII types that are determined solely by Regex
-                detected = parse_line(row, line_text, line_length, corpus=REGEX_ONLY_CORPUS,
-                                      detected_dict=detected, verify=False)
-
-                # parse row for PII types that require verification via an additional function
-                detected = parse_line(row, line_text, line_length, corpus=VERIFY_CORPUS,
-                                      detected_dict=detected, verify=True)
-
-            if ret:
-                if len(detected) < 11:
-                    preview = take(10, d.iteritems())
-                    print(preview)
-                elif len(detected) == 0:
-                    print(f"No PII was recognized in '{ascii_file}'.")
-                else:
-                    print(detected)
-
-        except Exception as e:
-            sys.exit(f"pii_recognition error: An error occurred during text PII parsing: {e}")
 
 
 if __name__ == "__main__":
@@ -323,8 +263,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Collect arguments for PII recognition.")
 
-    parser.add_argument('--display', action='store_true', default=False, help="Whether to display dictionary of PII found.")
-    parser.add_argument('--output_file', type=str, help="File name with JSON extension to which to write PII found.")
+    parser.add_argument('--output_file', type=str, help="File name with JSON extension to which to write PII found.", required = True)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--ascii_file', type=str, help="Valid file name from which to parse text for PII.")
@@ -340,9 +279,6 @@ if __name__ == "__main__":
 
     try:
         # dictionary of found PII must be returned if not written to file
-        if not a.output_file and not a.display:
-            parser.error("pii_recognition output error: PII must be displayed if output will not be written to a file.")
-
         if a.ascii_file:
             if os.path.exists(a.ascii_file) == 0:
                 sys.exit(f"File '{a.ascii_file}' is invalid.")
@@ -351,14 +287,14 @@ if __name__ == "__main__":
 
             else:
                 if a.output_file:
-                    pii_finder(a.ascii_file, output_file=a.output_file, file_format=True, ret=a.display)
+                    pii_finder(a.ascii_file, output_file=a.output_file, file_format=True)
                 else:
-                    pii_finder(a.ascii_file, file_format=True, ret=a.display)
+                    pii_finder(a.ascii_file, file_format=True)
         elif a.ascii_text:
             if a.output_file:
-                pii_finder(a.ascii_text, output_file=a.output_file,  file_format=False, ret=a.display)
+                pii_finder(a.ascii_text, output_file=a.output_file,  file_format=False)
             else:
-                pii_finder(a.ascii_text, output_file=None, file_format=False, ret=True)
+                pii_finder(a.ascii_text, output_file=None, file_format=False)
 
 
     except Exception as e:

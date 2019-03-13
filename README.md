@@ -28,7 +28,9 @@ The utility can be run on a file or a string, and can output the results to a di
 
 For example, this is the command line command to run the utilty on a file (FILENAME) and return a string. 
 
-`python3.6 finder.py --ascii_file 'FILENAME' --display`
+```
+$ python3.6 finder.py --ascii_file 'FILENAME' --display
+```
 
 ## Uses
 This utility provides the ability to extract multiple types of PII from 

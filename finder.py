@@ -3,14 +3,26 @@ import os
 import sys
 import json
 import nltk
+import logging
 import argparse
 import warnings
 from collections import defaultdict
 
 from checkers.check_functions import *
 
+logger = logging.getLogger('pii')
+sh = logging.StreamHandler(sys.stdout)
+logger.addHandler(sh)
+logger.setLevel(logging.INFO)
 
-def read_ascii(ascii_file, f=None, file_format=True):
+# LOG_CONFIG = {'handlers':{'console':{'class':'logging.StreamHandler',
+#                                      'formatter':'debug',
+#                                      'level':logging.DEBUG}},
+#               'root':{'handlers':('console'), 'level':'INFO'}}
+# logging.config.dictConfig(LOG_CONFIG)
+
+
+def read_ascii(ascii_file, output_file=None, f=None, file_format=True, ret=False):
     '''
     Reformat ASCII text string or ASCII text file for PII parssing and validation
 
@@ -52,8 +64,18 @@ def read_ascii(ascii_file, f=None, file_format=True):
 
     # reformat list of text strings into dictionary
     try:
+        if (len(text_as_str) > 10) and ret:
+            logging.warn("ASCII text passed is more than 10 lines long. A preview will be diplayed.")
+            
+            if not output_file:
+                basename, _ = os.path.splitext(ascii_file)
+                logging.warn(f"Full output will be written to slice_of_pii_{basename}.json")
+                output_file = f"slice_of_pii_{basename}.json"
+            else:
+                logging.warn(f"Full output will be written to {output_file}.")
         text_by_row = {row: (val, len(val)) for row, val in enumerate(text_as_str)}
-        return text_by_row
+        
+        return text_by_row, ret, output_file
     except Exception as e:
         sys.exit(f"pii_recognition error: An error occurred when formatting text for PII parsing: {e}")
 
@@ -208,7 +230,7 @@ def pii_finder(ascii_file, output_file=None, file_format=True, ret=False):
         PII types and PII of each type found in that row as values
     '''
     # return ascii text as dictionary of numbered rows
-    text_by_row = read_ascii(ascii_file, file_format=file_format)
+    text_by_row, ret, output_file = read_ascii(ascii_file, file_format=file_format)
 
     # initiate dictionary to capture findings
     detected = defaultdict(dict)
@@ -288,7 +310,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Collect arguments for PII recognition.")
 
-    parser.add_argument('--display', action='store_true', default=True, help="Whether to display dictionary of PII found.")
+    parser.add_argument('--display', action='store_true', default=False, help="Whether to display dictionary of PII found.")
     parser.add_argument('--output_file', type=str, help="File name with JSON extension to which to write PII found.")
 
     group = parser.add_mutually_exclusive_group(required=True)

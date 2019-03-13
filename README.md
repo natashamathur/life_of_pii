@@ -24,7 +24,7 @@ to a file), to allow for flexible interaction with possible PII.
 
 This utility requires Python 3.7 and the packages [`re`](https://docs.python.org/3/library/re.html) and [`nltk`](https://www.nltk.org/).
 
-The utility can be run on a file or a string, and can output the results to a dictionary or file. The input and output options are provided so that the utility can be more easily integrated as part of a larger codebase if needed. 
+The utility can be run on a file or a string, and can output the results to a dictionary or file. The input and output options are provided so that the utility can be more easily integrated as part of a larger codebase if needed, such as an API. 
 
 For example, this is the command line command to run the utilty on a file (FILENAME) and return a dictionary. 
 

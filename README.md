@@ -25,15 +25,15 @@ This utility requires at least Python 3.6 and the packages [`re`](https://docs.p
 
 The utility can be run on either a file or a string, outputting the results to either a dictionary or file. These input and output functionalities are provided so that the utility can be more easily integrated as part of a larger codebase if needed, such as an API. 
 
-### Examples
-Below is an example of a command line input to run the utilty on a file (FILENAME) then return a dictionary. 
 
+### Examples
+Below is an example of a command line input to run the utilty on the file **FILENAME** then return a dictionary. 
 To run the utilty on a file (FILENAME) and display a dictionary of PII found:
 ```
 $ python3.6 finder.py --ascii_file 'FILENAME' --display
 ```
 
-Below is an example of a command line input to run this utilty on a string (pii_string) and subsequently save the output to the file (OUTPUT_FILE).
+Below is an example of a command line input to run this utilty on the string **pii_string** and subsequently save the output to the file **OUTPUT_FILE**.
 ```
 $ python3.6 finder.py --ascii_string "I am 90 years old and I have an SSN of 310-74-3223" --output_file OUTPUT_FILE
 ```
